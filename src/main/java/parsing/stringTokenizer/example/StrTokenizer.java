@@ -28,7 +28,7 @@ public class StrTokenizer {
     public static void main(String[] args) {
 
         String source = "The   string tokenizer\nclass allows.an application+to.break a string into tokens.";
-        String separator = "' '\n+."; //separatorami są znak spacji, nowej linii, '+' oraz '.'
+        String separator = " \n+."; //separatorami są znak spacji, nowej linii, '+' oraz '.'
 
         List<String> res = tokenizuj(source, separator);
         String resultWithJoin = String.join("-", res);
