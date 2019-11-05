@@ -1,0 +1,6 @@
+W javie
+//komentarze są poprzedzane //są
+znakiem
+//co znaczy, że
+kompilator
+//pomija je przy kompilacji

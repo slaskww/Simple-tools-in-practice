@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Metoda split() z klasy String korzysta 'pod spodem' z metody split() zdefiniowanej w klasie Pattern
+ */
+
 public class StrSplit {
 
     public static List<String> tokenizuj(String source, String regex){
