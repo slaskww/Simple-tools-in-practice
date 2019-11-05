@@ -204,6 +204,19 @@ public class ParsingWithPatternAndMatcher {
         }
         return result;
     }
+
+    public boolean validatePesel(String pesel){
+
+        regex = "[1-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]";
+        pattern = Pattern.compile(regex);
+        matcher = pattern.matcher(pesel);
+
+        if (!matcher.matches())  return false;
+
+        char[] digits = pesel.toCharArray();
+        int sum = 1*digits[0] + 3*digits[1] + 7*digits[2] + 9*digits[3]+ 1*digits[4] + 3*digits[5] + 7*digits[6] + 9*digits[7] + 1*digits[8] + 3*digits[9] + 1*digits[10];
+        return sum % 10 == 0;
+    }
     public static void main(String[] args) throws IOException {
 
         ParsingWithPatternAndMatcher pars = new ParsingWithPatternAndMatcher();
@@ -214,6 +227,10 @@ public class ParsingWithPatternAndMatcher {
         pars.replaceFirstInUse();
         pars.replaceAllInUse();
         pars.regexAsPredicateInUse();
+
+        System.out.println("Pesel 54051401358 jest " + (pars.validatePesel("54051401358") ? "poprawny" : "bledny"));;
+        System.out.println("Pesel 45030408485e jest " + (pars.validatePesel("45030408485e") ? "poprawny" : "bledny"));;
+        System.out.println("Pesel 45030408485445 jest " + (pars.validatePesel("45030408485445") ? "poprawny" : "bledny"));;
     }
 
 }
