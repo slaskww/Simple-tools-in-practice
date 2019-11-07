@@ -4,6 +4,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+
+/**
+ * Struktura danych w pliku źródłowym report.txt:
+ *
+ * 1.Wydatki:  1,5 1,5 3,5 3,5
+ * 2.Przychody: 15 15 35 35
+ * 3.Wydatki: 1,5 1,5 3,5 3,5
+ * 4.Przychody: 15 15 35 35
+ */
+
 public class Report {
 
     private String report;
