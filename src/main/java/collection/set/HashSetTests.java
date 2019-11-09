@@ -13,7 +13,10 @@ public class HashSetTests {
     public void shouldSetContainsTheSameElements(){
 
         /**
-         * Kolekcja będąca zbiorem powinna zawierać unikalne elementy. Unikalność ta zostaje weryfikowana metodami hashcode() i equals() definiowanych w klasie elementu.
+         * Kolekcja będąca zbiorem powinna zawierać unikalne elementy.
+         * Unikalność ta zostaje w HashSet weryfikowana metodami hashcode() i equals() definiowanych w klasie elementu.
+         * W zbiorze TreeSet operacje porównania opierają się nie na hashCode() i equals(), lecz na metodzie compareTo() z interfejsu Comarable.
+         * Dlatego, jeśli chcemy by obiekty naszych kals znalazły się w zbiorze TreeSet, klasa tych obiektów musi implementować interfejs Complarable i nadoisywać jej metodę compareTo().
          * Jeśli set zawiera elementy modyfikowalne, to przy ich modyfikacji możemy doprowadzić do niespójności setu, co pokazano poniżej.
          * W teście tworzymy obiekt setu i wypełniamy go referencjami do obiektów Employee. Każdy z elementów różni unikalne nazwisko.
          * Kiedy zmodyfikujemy pole z wartością nazwiska w taki sposób, aby kazdy z elementów otrzymał tę samą wartość lastName, to każdy z elementów setu
@@ -44,7 +47,6 @@ public class HashSetTests {
 
         assertEquals(hashcodes.get(0), hashcodes.get(1));
         assertEquals(hashcodes.get(0), hashcodes.get(2));
-
 
         }
 

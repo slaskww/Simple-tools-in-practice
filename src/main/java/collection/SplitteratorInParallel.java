@@ -1,10 +1,7 @@
 package collection;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Spliterator;
+import java.util.*;
 
 public class SplitteratorInParallel {
 
@@ -73,5 +70,6 @@ public class SplitteratorInParallel {
     public static void main(String[] args) throws InterruptedException {
         splitterate();
     }
+
 
 }

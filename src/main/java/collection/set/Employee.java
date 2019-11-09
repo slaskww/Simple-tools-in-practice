@@ -1,6 +1,6 @@
 package collection.set;
 
-public class Employee {
+public class Employee implements Comparable<Employee> {
 
     private String firstName;
     private String lastName;
@@ -63,5 +63,23 @@ public class Employee {
                 ", lastName='" + lastName + '\'' +
                 ", age=" + age +
                 "}\n";
+    }
+
+    /**
+     * metoda compareTo() z interfejsu Comparable, jest niezbędna jeśli chcemy, by instancje klasy Employee byly umieszczane w zbiorze TreeSet.
+     * TreeSet inaczej niż HashSet, nie opiera swoich operacji na metodach hashCode() i equals(), lecz na metodzie compareTo() lub implementacji metody compare() dostarczanej
+     * w postaci lambda-wyrażenia do konstruktora TreeSet
+     */
+
+    @Override
+    public int compareTo(Employee employee) {
+        int idx = lastName.compareTo(employee.lastName);
+        if (idx == 0){
+            idx = firstName.compareTo(employee.firstName);
+        }
+        if (idx == 0){
+            idx = age - employee.getAge();
+        }
+        return idx;
     }
 }
