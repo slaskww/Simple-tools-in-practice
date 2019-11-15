@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 public class CodingDecodingInUse {
 
     /**
+     * InputStreamReader i OutputStreamWriter
      * Kodowanie i dekodowanie przy użyciu strumieni wejścia-wyjścia.
      * Java posługuje się znakamu w formacie Unicode, a dane zapisywane są w plikach w postaci sekwencji bajtów.
      * Strumienie znakowe potrafią przekształcać bajtowe źródła danych pochodzących z plików w znaki Unicode i
@@ -24,9 +25,9 @@ public class CodingDecodingInUse {
 
 
         try(FileInputStream fi = new FileInputStream("inp.txt"); //strumieniowa klasa przedmiotowa
-            BufferedReader br = new BufferedReader(new InputStreamReader(fi)); //strumieniowa klasa przetwarzająca
+            BufferedReader br = new BufferedReader(new InputStreamReader(fi, p)); //strumieniowa klasa przetwarzająca
             FileOutputStream fo = new FileOutputStream("out.txt", true); //strumieniowa klasa przedmiotowa
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fo))){ //strumieniowa klasa przetwarzająca
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fo, p))){ //strumieniowa klasa przetwarzająca
 
             String line;
 

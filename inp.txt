@@ -1,3 +1,6 @@
 Ala
 Ma
 Kota
+44
+45.5
+true
