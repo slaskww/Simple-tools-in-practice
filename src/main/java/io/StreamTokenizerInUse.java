@@ -1,9 +1,6 @@
 package io;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StreamTokenizer;
-import java.io.StringReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +29,8 @@ public class StreamTokenizerInUse {
 
         System.out.println("source:\n" + source);
 
-        Reader reader = new StringReader(source);
+        Reader reader = new StringReader(source); //strumień znakowy, który z łańcucha znaków zwraca strumień kodów znaków.
+
         StreamTokenizer streamTokenizer = new StreamTokenizer(reader);
 
         List<String> words = new ArrayList<>();
