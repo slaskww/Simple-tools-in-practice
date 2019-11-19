@@ -14,13 +14,13 @@ public class StreamTests {
 
         /**
          * Metoda splitToStream() dzieli dany łańcuch znaków na podłańcuchy znaków,
-         * przyjmując, że sepratorem będzie pojedynczy jeden lub wiele znaków niebędący liczbą("\\D"+).
+         * przyjmując, że sepratorem będzie pojedynczy jeden lub wiele znaków niebędących liczbą("\\D"+).
          * Następnie z podłańcuchów tworzy strumień (obiekt klasy Stream<String>) .
          */
 
-        String source = "Ala ma 44 królikow, 33 zające i 23 fredki. Ile ma łącznie zwierząt?";
+        String source = "Ala ma 44królikow, 33. zające i 23 fredki. Ile ma łącznie zwierząt?";
 
-        String regex = "\\D+";
+        String regex = "\\D+"; //sepratorem będzie pojedynczy jeden lub wiele znaków niebędących liczbą
         Pattern pattern = Pattern.compile(regex);
         Stream<String> splittedStrings = pattern.splitAsStream(source);
 

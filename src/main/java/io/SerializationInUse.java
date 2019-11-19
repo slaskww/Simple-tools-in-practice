@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * Serializacja służy do utrwalenia obiektów. Obiekty stworzone przez program są dostępne w czasie działania programu.
@@ -24,11 +23,11 @@ public class SerializationInUse {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
 
-        WeatherData data = new WeatherData(LocalDate.now(), "It was rainig all day",  new ArrayList<>(Arrays.asList(14.0, 17.8, 19.2, 21.0, 22.1, 20.4, 18.8, 16.5)));
+        WeatherData data = new WeatherData(LocalDate.now(), "It was raining all day",  new ArrayList<>(Arrays.asList(14.0, 17.8, 19.2, 21.0, 22.1, 20.4, 18.8, 16.5)));
 
-        WeatherData.save(data);
+        WeatherData.save(data); //wywołujemy statyczną metodę save, która serializuje obiekt 'data' podany w parametrze
 
-        WeatherData loadedData = WeatherData.load("serialOut.txt");
+        WeatherData loadedData = WeatherData.load("serialOut.txt"); //wywołujemy statyczną metodę load, która deserializuje dane w pliku o nazwie podanej w parametrze
         System.out.println(loadedData);
 
         }

@@ -4,6 +4,10 @@ import java.io.*;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * Klasa pomocnicza wykorzystywana w klasie SerializationInUse
+ */
+
 public class WeatherData implements Serializable {
 
     private LocalDate date;

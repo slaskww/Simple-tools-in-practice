@@ -8,6 +8,8 @@ import java.util.StringTokenizer;
 /**
  * StringTokenizer is a legacy class that is retained for compatibility reasons ALTHOUGH ITS USE IS DISCOURAGE IN NEW CODE.
  * It is RECOMMENDED that anyone seeking this functionality use the SPLIT METHOD OF SPRING or the JAVA.UTIL.REGEX package instead.
+ * Tak więc używanie obiektów klasy StringTokenizer nie jest rekomendowane dla nowego kodu.
+ * Należy używać metody split(String regex) wywołanej na obiektach łańuchowych String.
  */
 
 public class StrTokenizer {

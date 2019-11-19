@@ -3,6 +3,10 @@ package io;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Klasa pomocnicza wykorzystywana w klasie PipesInUse (z PipedOutputStream)
+ */
+
 public class DataGenerator extends Thread {
 
     private OutputStream outputStream;

@@ -3,6 +3,10 @@ package io;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * Klasa pomocnicza wykorzystywana w klasie PipesInUse (z PipedInputStream)
+ */
+
 public class DataReceiver extends Thread{
 
     private InputStream inputStream;
