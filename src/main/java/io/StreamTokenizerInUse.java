@@ -24,7 +24,7 @@ public class StreamTokenizerInUse {
 
     public static void main(String[] args) throws IOException {
 
-        String source = String.join("\n", "The 44%%StreamTokenizer $class ", "takes 55 an%input stream and parses it into 66", "//tokens", "allowing.the 77 tokens ", "to be#read one at a@time. 88");
+        String source = String.join("\n", "The 44%%StreamTokenizer $class ", "takes 55 an%input stream and parses it into 66", "//tokens", "allowing+the 77 tokens ", "to be#read one at a@time. 88");
 
 
         System.out.println("source:\n" + source);
@@ -32,6 +32,8 @@ public class StreamTokenizerInUse {
         Reader reader = new StringReader(source); //strumień znakowy, który z łańcucha znaków zwraca strumień kodów znaków.
 
         StreamTokenizer streamTokenizer = new StreamTokenizer(reader);
+        streamTokenizer.slashSlashComments(false);
+        streamTokenizer.slashSlashComments(true);
 
         List<String> words = new ArrayList<>();
         List<Double> numbers = new ArrayList<>();
@@ -51,7 +53,6 @@ public class StreamTokenizerInUse {
         System.out.println("Words:\n" + words);
         System.out.println("Numbers :\n" + numbers);
         System.out.println("Characters:\n" + chars);
-
     }
 
 
