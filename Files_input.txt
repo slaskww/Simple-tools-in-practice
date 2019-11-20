@@ -1,0 +1,6 @@
+java.nio.file.Files 
+This class consists exclusively of 
+static methods that operate on 
+files, directories, 
+or 
+other types of files.
