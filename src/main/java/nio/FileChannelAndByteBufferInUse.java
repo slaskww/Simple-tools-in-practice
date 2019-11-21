@@ -1,7 +1,10 @@
 package nio;
 
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.DoubleBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -100,10 +103,55 @@ public class FileChannelAndByteBufferInUse {
             while (buffer.hasRemaining()){
                 System.out.print((char) buffer.get() + " ");
             }
+            System.out.println();
         }
 
     }
 
+    public static void byteBufferAsDoubleBuffer() throws IOException {
+
+        /**
+         * Obiekty ByteBuffer pozwalają na wygenerowanie widoku na ten bufor w postaci dowolnego bufora na typ prosty.
+         * Takie bufory (np. DoubleBuffer, IntBuffer, CharBuffer) pozwalają w łatwy sposób przetwarzać dane typów prostych pobieranych
+         * z kanału i zapisywac dane typu prostego do kanału.
+         * Trzeba jednak pamiętać, że pozycja i limit buforu bajtowego są niezależne od pozycji i limitu jego widoku.
+         * Wyłołując metode flip() dla widoku, nie będzie to miało wpływu na pozycje i limit bufora bajtowego.
+         */
+
+        String fileName = "file_channel_Double.txt";
+        init(fileName); //tworzymy testowy plik i wypełniamy go danymi
+
+        //Tworzymy i otwieramy kanał plikowy
+        FileChannel channel = FileChannel.open(Paths.get(fileName));
+
+        //Alokujemy odpowiednią liczbę bajtów dla bufora
+        ByteBuffer buffer = ByteBuffer.allocate((int) channel.size());
+
+        //odczytujemy dane z kanału plikowego i zapisujemy je w buforze
+        channel.read(buffer);
+
+        //Przestawiamy bufor - ustawiamy limit na bieżącą pozycję i ustawiać wskaźnik pozycji na zero
+        buffer.flip();
+
+        //Tworzymy widok buforu bajtowego jako bufor double. Z racji tego, ze jest to widok, pracujemy wciąż na oryginalnym buforze bajtowym
+        DoubleBuffer doubleBuffer = buffer.asDoubleBuffer();
+
+
+    while (doubleBuffer.hasRemaining()){
+        System.out.print(doubleBuffer.get() + " ");
+    }
+    }
+
+    private static void init(String fileName) throws IOException {
+
+        //obiekt strumienowej klasy przetwarzającej. Dane typów pierwotnych i łańcuchy znakow (w tym przypadku typ double) zamienia w strumień wartości binarnych
+
+        DataOutputStream dos = new DataOutputStream(new FileOutputStream(fileName));
+        for (int i = 0; i< 10; i++){
+            dos.writeDouble(i + 0.5);
+        }
+        dos.close();
+    }
 
     public static void main(String[] args) throws IOException {
 
@@ -115,6 +163,7 @@ public class FileChannelAndByteBufferInUse {
         System.out.println(Arrays.toString(res));
 
         readAndWriteChannel(fileName);
+        byteBufferAsDoubleBuffer();
     }
 
 }

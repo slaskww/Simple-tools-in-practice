@@ -15,19 +15,19 @@ public class BinaryStreamInUse {
     public static void main(String[] args) {
 
         String text = "Tekst do zapisana w formie binarnej";
-        int number = 12345;
+        double number = 12345;
 
-        try(FileOutputStream fo = new FileOutputStream("binaryOut");
+        try(FileOutputStream fo = new FileOutputStream("binary_out.txt");
             DataOutputStream dos = new DataOutputStream(fo);
-            DataInputStream dip = new DataInputStream(new FileInputStream("binaryOut"))
+            DataInputStream dip = new DataInputStream(new FileInputStream("binary_out.txt"))
         ){
 
             dos.writeUTF(text);
-            dos.writeInt(number);
+            dos.writeDouble(number);
 
             System.out.println("Odczyt");
             String textFromFile = dip.readUTF();
-            int numberFromFile = dip.readInt();
+            double numberFromFile = dip.readDouble();
             System.out.println(textFromFile);
             System.out.println(numberFromFile);
 
