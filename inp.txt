@@ -1,6 +1,4 @@
-Ala
-Ma
-Kota
-44
-45.5
-true
+Ala Ma
+Kota 
+44 
+45 5 true

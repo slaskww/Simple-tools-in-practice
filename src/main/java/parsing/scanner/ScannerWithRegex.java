@@ -24,7 +24,7 @@ public class ScannerWithRegex {
 
     public static void sumNumbers(String txt){
 
-        String delimiter = "[^0-9]+";
+        String delimiter = "[^0-9]+"; //delimiter - separator - w tym przypadku jedno lub więcej wystąpień niecyfry (alternatywnie można tu użyc \\D+)
 
         Scanner scanner = new Scanner(txt).useDelimiter(delimiter);
 
