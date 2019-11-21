@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -66,7 +67,10 @@ public static void findInLineWithScanner(){
 
 public static void skipWithScanner(){
 
-    String source = "a round black platform with model blackish horses, blackcurrants, etc. that turns around and around and that blackbirds ride on at a blackboard";
+    String source = "a round black platform with model blackish horses, blackcurrants etc. that turns around and around and that blackbirds ride on at a blackboard";
+
+    //String[] s =  source.split("(black)[a-z]*");
+    //System.out.println(Arrays.toString(s));
 
     try(Scanner scanner = new Scanner(source)){
         scanner.skip("[a-z]");

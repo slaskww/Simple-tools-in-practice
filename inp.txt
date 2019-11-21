@@ -1,4 +1,4 @@
 Ala Ma
 Kota 
 44 
-45 5 true
+45 0.5 true

@@ -89,6 +89,11 @@ public class FileObjectTests {
 
         boolean createdAgain = directory.createNewFile();
         assertFalse(createdAgain);
+
+       /* File cat = new File("Some");
+        for (String f: cat.list()){
+            System.out.println(f);
+        }*/
     }
 
 
