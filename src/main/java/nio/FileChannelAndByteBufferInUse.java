@@ -1,17 +1,14 @@
 package nio;
 
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.DoubleBuffer;
+import java.io.*;
+import java.nio.*;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.List;
 
 import static java.nio.file.StandardOpenOption.READ;
 import static java.nio.file.StandardOpenOption.WRITE;
@@ -20,6 +17,7 @@ public class FileChannelAndByteBufferInUse {
 
     public static void writeChannel(String filename, byte[] data) throws IOException {
 
+        System.out.println("writeChannel():");
         //Tworzymy kanał plikowy przy użyciu statycznej metody open() z klasy FileChannel
 
         try (FileChannel fileChannel = FileChannel.open(Paths.get(filename), WRITE)) {//tworzymy nowy kanał plikowy
@@ -43,6 +41,7 @@ public class FileChannelAndByteBufferInUse {
 
     public static byte[] readChannel(String filename) throws IOException {
 
+        System.out.println("readChannel():");
         try (FileChannel fileChannel = (FileChannel) Files.newByteChannel(Paths.get(filename), READ)) {
 
             int size = (int) fileChannel.size();
@@ -68,6 +67,7 @@ public class FileChannelAndByteBufferInUse {
 
     public static void readAndWriteChannel(String fileName) throws IOException {
 
+        System.out.println("readAndWriteChannel():");
         //odczytujemy dane z kanału plikowego do bufora
 
         try (FileChannel fileChannel = FileChannel.open(Paths.get(fileName), READ, WRITE)) {
@@ -122,8 +122,9 @@ public class FileChannelAndByteBufferInUse {
          * Wyłołując metode flip() dla widoku, nie będzie to miało wpływu na pozycje i limit bufora bajtowego.
          */
 
+        System.out.println("byteBufferAsDoubleBuffer():");
         String fileName = "file_channel_Double.txt";
-        init(fileName); //tworzymy testowy plik i wypełniamy go danymi
+        initDouble(fileName); //tworzymy testowy plik i wypełniamy go danymi
 
         //Tworzymy i otwieramy kanał plikowy
         FileChannel channel = FileChannel.open(Paths.get(fileName));
@@ -147,7 +148,7 @@ public class FileChannelAndByteBufferInUse {
         System.out.println();
     }
 
-    public static void byteBufferAsCharbuffer(){
+    public static void byteBufferAsCharbuffer() {
 
         /**
          * Bufor znakowy CharBuffer reprezentuje sekwencję wartości typu char (znaki Unicode).
@@ -175,11 +176,12 @@ public class FileChannelAndByteBufferInUse {
          *                  forEach(stringCharsetEntry -> System.out.println(stringCharsetEntry.getKey()));
          */
 
+        System.out.println("byteBufferAsCharbuffer():");
         String fileName = "file_channel_char.txt";
         Charset charsetIn = Charset.forName("UTF-8");
         Charset charsetOut = Charset.forName("ISO-2022-JP-2");
 
-        try(FileChannel channel = FileChannel.open(Paths.get(fileName), WRITE, READ)){
+        try (FileChannel channel = FileChannel.open(Paths.get(fileName), WRITE, READ)) {
 
             //tworzymy bufor bajtowy
             ByteBuffer bbuffer = ByteBuffer.allocate((int) channel.size());
@@ -219,16 +221,64 @@ public class FileChannelAndByteBufferInUse {
             //zapisujemy do pliku dane z bufora bajtowego z pierwotną stroną kodową
             channel.write(bbuffer);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public static void fileChannelWithMultiBuffers() {
+
+        /**
+         * Kanały umożliwiają wprowadzanie danych za jednym odwołaniem do wielu buforów, lub zapisywaniem danych w wielu buforów.
+         * Odbywa się to przy pomocy metod kanału: write(ByteBuffer[]) i read(ByteBuffer[]) przyjmujące jako argument tablicę buforów bajtowych.
+         * Taka jednorazowa (atomistyczna) operacja zapisu/odczytu za pomocą wielu buforów bajtowych jest wygodna i efektywna.
+         *
+         */
+
+        System.out.println("fileChannelWithMultiBuffers():");
+
+        String fileName = "file_channel_multi_buffers.txt";
+        int size = 3;
+        initShortAndDouble(fileName, size);
+
+        try (FileChannel fileChannel = FileChannel.open(Paths.get(fileName), READ, WRITE)) {
+
+
+            //Alokujemy w buforach tyle pamięci ile bajtów zajmują wartości typu short (2 bajty) i double (8 bajtów)
+            ByteBuffer[] buffers = {
+                    ByteBuffer.allocate(size * 2),
+                    ByteBuffer.allocate(size * 8)
+            };
+
+            fileChannel.read(buffers);
+
+            buffers[0].flip();
+            buffers[1].flip();
+
+            ShortBuffer sbuf = buffers[0].asShortBuffer();
+            DoubleBuffer dbuf = buffers[1].asDoubleBuffer();
+
+            while (sbuf.hasRemaining()) {
+
+                short el = sbuf.get();
+                System.out.println(el);
+            }
+
+            while (dbuf.hasRemaining()) {
+
+                double el = dbuf.get();
+                System.out.println(el);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-
     }
 
-    private static void init(String fileName) throws IOException {
+
+
+    private static void initDouble(String fileName) throws IOException {
 
         //obiekt strumienowej klasy przetwarzającej. Dane typów pierwotnych i łańcuchy znakow (w tym przypadku typ double) zamienia w strumień wartości binarnych
 
@@ -237,6 +287,29 @@ public class FileChannelAndByteBufferInUse {
             dos.writeDouble(i + 0.5);
         }
         dos.close();
+    }
+
+    private static void initShortAndDouble(String fileName, int size) {
+
+        try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(fileName))) {
+
+            short[] shorts = new short[size];
+            double[] doubles = new double[size];
+
+            for (int i = 0; i < size; i++) {
+                shorts[i] = (short) (i + 1);
+                doubles[i] = i + 4.5;
+            }
+
+            for (short aShort : shorts) {
+                dos.writeShort(aShort);
+            }
+            for (double aDouble : doubles) {
+                dos.writeDouble(aDouble);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) throws IOException {
@@ -251,6 +324,8 @@ public class FileChannelAndByteBufferInUse {
         readAndWriteChannel(fileName);
         byteBufferAsDoubleBuffer();
         byteBufferAsCharbuffer();
+        fileChannelWithMultiBuffers();
+
     }
 
 }
