@@ -4,11 +4,14 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Map;
 
 import static java.nio.file.StandardOpenOption.READ;
 import static java.nio.file.StandardOpenOption.WRITE;
@@ -19,7 +22,7 @@ public class FileChannelAndByteBufferInUse {
 
         //Tworzymy kanał plikowy przy użyciu statycznej metody open() z klasy FileChannel
 
-        try(FileChannel fileChannel = FileChannel.open(Paths.get(filename), WRITE)){//tworzymy nowy kanał plikowy
+        try (FileChannel fileChannel = FileChannel.open(Paths.get(filename), WRITE)) {//tworzymy nowy kanał plikowy
             ByteBuffer buffer = ByteBuffer.wrap(data);
             fileChannel.write(buffer);
         }
@@ -37,15 +40,16 @@ public class FileChannelAndByteBufferInUse {
          */
 
     }
+
     public static byte[] readChannel(String filename) throws IOException {
 
-        try(FileChannel fileChannel = (FileChannel) Files.newByteChannel(Paths.get(filename), READ)){
+        try (FileChannel fileChannel = (FileChannel) Files.newByteChannel(Paths.get(filename), READ)) {
 
             int size = (int) fileChannel.size();
             ByteBuffer buffer = ByteBuffer.allocate(size);
             fileChannel.read(buffer); //zapełniamy bufor danymi z kanału plikowego
 
-           return buffer.array();
+            return buffer.array();
         }
 
         /**
@@ -66,7 +70,7 @@ public class FileChannelAndByteBufferInUse {
 
         //odczytujemy dane z kanału plikowego do bufora
 
-        try(FileChannel fileChannel = FileChannel.open(Paths.get(fileName), READ, WRITE)){
+        try (FileChannel fileChannel = FileChannel.open(Paths.get(fileName), READ, WRITE)) {
 
             int size = (int) fileChannel.size();
             ByteBuffer buffer = ByteBuffer.allocate(size);
@@ -74,11 +78,11 @@ public class FileChannelAndByteBufferInUse {
             fileChannel.read(buffer);
             buffer.flip();
 
-            for (int i = 0; i < size; i++){
-                byte oldValue =  buffer.get(i);
+            for (int i = 0; i < size; i++) {
+                byte oldValue = buffer.get(i);
                 System.out.print((char) oldValue + " ");
 
-                byte newValue = (byte)(oldValue + 4);
+                byte newValue = (byte) (oldValue + 4);
                 buffer.put(i, newValue);
             }
 
@@ -100,7 +104,7 @@ public class FileChannelAndByteBufferInUse {
             buffer.flip();
             System.out.println("Bufor po 'przewinieciu': " + buffer);
 
-            while (buffer.hasRemaining()){
+            while (buffer.hasRemaining()) {
                 System.out.print((char) buffer.get() + " ");
             }
             System.out.println();
@@ -127,7 +131,7 @@ public class FileChannelAndByteBufferInUse {
         //Alokujemy odpowiednią liczbę bajtów dla bufora
         ByteBuffer buffer = ByteBuffer.allocate((int) channel.size());
 
-        //odczytujemy dane z kanału plikowego i zapisujemy je w buforze
+        //odczytujemy dane z kanału plikowego i zapisujemy je w buforze(sec.)
         channel.read(buffer);
 
         //Przestawiamy bufor - ustawiamy limit na bieżącą pozycję i ustawiać wskaźnik pozycji na zero
@@ -137,9 +141,91 @@ public class FileChannelAndByteBufferInUse {
         DoubleBuffer doubleBuffer = buffer.asDoubleBuffer();
 
 
-    while (doubleBuffer.hasRemaining()){
-        System.out.print(doubleBuffer.get() + " ");
+        while (doubleBuffer.hasRemaining()) {
+            System.out.print(doubleBuffer.get() + " ");
+        }
+        System.out.println();
     }
+
+    public static void byteBufferAsCharbuffer(){
+
+        /**
+         * Bufor znakowy CharBuffer reprezentuje sekwencję wartości typu char (znaki Unicode).
+         * Ma on wszystkie właściwości bufora, a z racji tego, że implementuje interfejs CharSequence
+         * (podobnie jak String, StringBuffer i StringBuilder), posiada pewne dodatkowe możliwości.
+         * Posiada wszystkie metody tego interfejsu.
+         * Klasa CharBuffer posiada również wygodną statyczną metode wrap(CharSequence), która zamienia dowony
+         * obiekt implementujący CharSequence w bufor znakowy
+         *
+         *      String str = "May the force B with U";
+         *      CharBuffer buffer CharBuffer.wrap(str);
+         *
+         * Przy kanałowym wczytywaniu i zapisywaniu strumieni tekstowych powstaje problem kodowania i dekodowania znaków.
+         * Problem ten rozwiązuje klasa Charset której obiekty reprezentują stronę kodową. Klasa ta dostarcza metod
+         * encode(CharBuffer) i decode(ByteBuffer) do prostego kodowania i dekodowania znaków.
+         *
+         *      Charset charset = Charset.forName("ISO-8859-2")
+         *      ByteBuffer buf = charset.encode(chbuf);
+         *      CharBuffer cbuf = charset.decode(buf);
+         *
+         * Strony kodowania dla danej implementacji JVM odczytamy wywołując statyczną metodę availCharsets()
+         *
+         *          Map<String, Charset> charsets =  Charset.availableCharsets();
+         *          charsets.entrySet().stream().
+         *                  forEach(stringCharsetEntry -> System.out.println(stringCharsetEntry.getKey()));
+         */
+
+        String fileName = "file_channel_char.txt";
+        Charset charsetIn = Charset.forName("UTF-8");
+        Charset charsetOut = Charset.forName("ISO-2022-JP-2");
+
+        try(FileChannel channel = FileChannel.open(Paths.get(fileName), WRITE, READ)){
+
+            //tworzymy bufor bajtowy
+            ByteBuffer bbuffer = ByteBuffer.allocate((int) channel.size());
+            channel.read(bbuffer);
+            bbuffer.flip();
+
+            //tworzymy bufor znakowy, wykorzystując obiekt Charset i jego metodę decode() zwracającą obiekt CharBuffer
+            CharBuffer cbuffer = charsetIn.decode(bbuffer);
+
+            System.out.println(cbuffer.toString());
+
+            //bufor znakowy kodujmey na bufor bajtowy w oparciu o stronę kodową zawartą w charsetOut.
+            bbuffer = charsetOut.encode(cbuffer);
+
+            //metoda truncate(long size) pozwala na zmianę rozmiaru pliku na size przez usunięcie bajtów wykracZających poza określony przez size koniec pliku
+            //w naszym przypadku ustalamy rozmiar na 0, więc de facto usuwamy zawartość całego pliku.
+
+            channel.truncate(0);
+
+            //zapisujemy do pliku dane z bufora bajtowego ze zmienioną stroną kodową
+            channel.write(bbuffer);
+
+            //ponownie odczytujemy dane z kanału do bufora
+            channel.read(bbuffer);
+            bbuffer.flip();
+
+            //tworzymy bufor znakowy, wykorzystując obiekt Charset i jego metodę decode() zwracającą obiekt CharBuffer
+            cbuffer = charsetOut.decode(bbuffer);
+
+            String text = cbuffer.toString();
+            System.out.println(text);
+
+            //bufor znakowy kodujmey na bufor bajtowy w oparciu o stronę kodową zawartą w charsetOut.
+            bbuffer = charsetIn.encode(CharBuffer.wrap(text));
+
+            channel.truncate(0);
+            //zapisujemy do pliku dane z bufora bajtowego z pierwotną stroną kodową
+            channel.write(bbuffer);
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     private static void init(String fileName) throws IOException {
@@ -147,7 +233,7 @@ public class FileChannelAndByteBufferInUse {
         //obiekt strumienowej klasy przetwarzającej. Dane typów pierwotnych i łańcuchy znakow (w tym przypadku typ double) zamienia w strumień wartości binarnych
 
         DataOutputStream dos = new DataOutputStream(new FileOutputStream(fileName));
-        for (int i = 0; i< 10; i++){
+        for (int i = 0; i < 10; i++) {
             dos.writeDouble(i + 0.5);
         }
         dos.close();
@@ -164,6 +250,7 @@ public class FileChannelAndByteBufferInUse {
 
         readAndWriteChannel(fileName);
         byteBufferAsDoubleBuffer();
+        byteBufferAsCharbuffer();
     }
 
 }
