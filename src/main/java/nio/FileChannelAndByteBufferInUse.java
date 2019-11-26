@@ -276,7 +276,42 @@ public class FileChannelAndByteBufferInUse {
 
     }
 
+    public static void fileAsMappedByteBuffer() throws IOException {
 
+        System.out.println("fileAsMappedByteBuffer():");
+        String fileName = "file_to_mapping.txt";
+        initDouble(fileName);
+
+
+        RandomAccessFile randomAccessFile = new RandomAccessFile(fileName, "rw");
+        FileChannel channel = randomAccessFile.getChannel();
+
+        MappedByteBuffer mappedByteBuffer = channel.map(
+                FileChannel.MapMode.READ_WRITE,    //tryb odczyt-zapis
+                0,                              //od początku pliku
+                channel.size()                     //do końca pliku
+        );
+
+        DoubleBuffer doubleBuffer = mappedByteBuffer.asDoubleBuffer();
+
+        int count = 0;
+        while (doubleBuffer.hasRemaining()) {
+            double d = doubleBuffer.get();
+            System.out.println(d);
+            doubleBuffer.put(count++, d * 100); //zmieniamy wartość i-tego elementu. Działamy na widoku, więc wynik zostanie odzwierciedlony w buferze bajtowym
+        }
+        mappedByteBuffer.force(); // wymuszamy na buforze bajtowym by odzwierciedlił zmiany w pliku
+
+        try(DataInputStream dis = new DataInputStream(new FileInputStream(fileName))){
+
+            while (true){
+                System.out.println(dis.readDouble());
+            }
+
+        }catch (EOFException e){
+            return;
+        }
+    }
 
     private static void initDouble(String fileName) throws IOException {
 
@@ -325,6 +360,7 @@ public class FileChannelAndByteBufferInUse {
         byteBufferAsDoubleBuffer();
         byteBufferAsCharbuffer();
         fileChannelWithMultiBuffers();
+        fileAsMappedByteBuffer();
 
     }
 
