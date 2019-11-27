@@ -20,7 +20,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
  * metody run() naszego Timera w nowo utworzonym wątku.
  */
 
-public class Capitals {
+public class CapitalsRunnableInAction {
 
     public static void main(String[] args) {
 
