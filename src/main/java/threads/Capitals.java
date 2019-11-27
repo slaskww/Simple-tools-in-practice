@@ -7,6 +7,19 @@ import java.util.Set;
 import static javax.swing.JOptionPane.showInputDialog;
 import static javax.swing.JOptionPane.showMessageDialog;
 
+/**
+ * Proces (program) wykonuje się w dwóch wątkach.
+ * Głowny wątek wykonuje się po uruchomieniu metody main().
+ * Równolegle wykonuje się wątek utworzony w metodzie main() i uruchomiony metodą start().
+ *
+ * KOD WYKONUJĄCY SIĘ W WĄTKU określany jest przez obiekt klasy implementującej interfejs RUNNABLE i zawierający deklarację metody run().
+ * W naszym przypadku jest to obiekt MyTimer, który implementuje Runnable i implementuje metode run(). Kod metody run() będzie wykonywany w osobnym wątku.
+ *
+ * OBIEKT WĄTKU tworzymy wykorzystując klasę THREAD. Klasa ta pozwala na tworzenie nowych wątków i uruchamianie w nich kodu wykonujacego.
+ * Obiekt klasy Thread przyjmuje w konstruktorze argument typu Runnable (np. nasz obiekt MyTimer), a wywołanie metody start() powoduje uruchomienie kodu
+ * metody run() naszego Timera w nowo utworzonym wątku.
+ */
+
 public class Capitals {
 
     public static void main(String[] args) {
@@ -16,7 +29,7 @@ public class Capitals {
 
         int count = 0;
 
-        Thread thread = new Thread(new Timer());
+        Thread thread = new Thread(new MyTimer());
         thread.start();
 
 
