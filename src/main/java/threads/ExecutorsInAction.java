@@ -1,6 +1,7 @@
 package threads;
 
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.concurrent.*;
 
 public class ExecutorsInAction {
 
+
     public static void fixedThreadPoolExecutor(){
 
 
@@ -40,6 +42,51 @@ public class ExecutorsInAction {
         for (int i = 1; i <= 4; i++){
             exec.execute(new Counter(i* 10000, "cashed thread pool: thread" + i));
         }
+        exec.shutdown();
+    }
+
+    /**
+     * Wykonawca ScheduledExecutorService wykonuje zadania w określonych cyklach czasu.
+     * Podstawowe metody tego Wykonawcy to:
+     *
+     *      schedule(Callable<T>, wartośćOpoznienia, TimeUnit) - zadnie zostanie wykonane raz po upływie czasu 'wartośćOpoznienia'
+     *      scheduleAtFixedRate(Runnable, init, odstepCzasu, TimeUnit) - uruchamia zadanie po upływie 'init' a następnie wykonuje zadanie cyklicznie co odstepCzasu
+     *      scheduleWithFixedDelay(Runnable, init, wartośćOpoznienia, TimeUnit) - uruchamia zadanie po upływie 'init' a następnie wykonuje zadanie co wartośćOpoznienia
+     *
+     * Metody zwracają obiekt wyniku ScheduledFuture<?>
+     *
+     * Zadania będą wykonywane do momentu aż Wykonawca nie zostanie zamknięty (exec.shutDown())
+     * lub zadanie nie zostanie anulowane (fut.cancel(boolean)), gdzie argument typu boolean informuje, czy zadanie powinno zostać przerwane
+     */
+
+    public static void scheduledThreadPoolExecutor() throws InterruptedException {
+
+        ScheduledExecutorService exec = Executors.newScheduledThreadPool(4);
+
+        Runnable rtask = () -> {
+            System.out.println("Wykonano o: " + LocalTime.now());
+        };
+
+        Callable<String> ctask = () -> {
+            return "Wykonano o" + LocalTime.now();
+        };
+
+        ScheduledFuture<?> fut = exec.schedule(ctask, 5, TimeUnit.SECONDS);
+
+        try {
+            System.out.println("exec.schedule z Callable: " + fut.get());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("exec.scheduleAtFixedRate:");
+        fut = exec.scheduleAtFixedRate(rtask, 1, 1, TimeUnit.SECONDS);
+        Thread.sleep(5000);
+        fut.cancel(false);
+
+        System.out.println("exec.scheduleWithFixedDelay:");
+        fut = exec.scheduleWithFixedDelay(rtask, 1, 1, TimeUnit.SECONDS);
+        Thread.sleep(5000);
         exec.shutdown();
     }
 
@@ -138,13 +185,14 @@ public class ExecutorsInAction {
         exec.shutdown();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
        // fixedThreadPoolExecutor();
        // cashedThreadPoolExecutor();
        // invokeAllInUse();
        // invokeAnyInUse();
-        executorCompletionServiceInUse();
+       // executorCompletionServiceInUse();
+        scheduledThreadPoolExecutor();
     }
 
 }
