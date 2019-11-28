@@ -30,7 +30,7 @@ import java.util.concurrent.*;
  *      V get() - pobiera wynik zadania, czeka jeśli zadanie jeszcze się nie zakończyło
  *      V get(long timeout, TimeOut unit) - pobiera wynik zadania, czeka określony czas, jeśli zadanie jeszcze się nie zakończyło,
  *      boolean isCancelled() - zwraca informację, czy zadanie zostało anulowane
- *      boolean siDone() - zwraca informację, czy zadanie zostało zakończone (przez zwykłe zakończenie lub anulowanie)
+ *      boolean isDone() - zwraca informację, czy zadanie zostało zakończone (przez zwykłe zakończenie lub anulowanie)
  *
  *      W zadaniu tworzymy Wykonawce, któremu dajemy cztery zadania implementujące Callable (FiboCallableInAction).
  *      Zwracane obiekty Future umieszczamy na liście i w pętli co 30 ms. usypiamy wątek oraz iteracyjnie odpytujemy każdy z obiekt Future, czy zadanie zostalo wykonane.
