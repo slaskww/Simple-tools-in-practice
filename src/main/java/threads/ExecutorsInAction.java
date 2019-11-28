@@ -56,7 +56,7 @@ public class ExecutorsInAction {
      * Metody zwracają obiekt wyniku ScheduledFuture<?>
      *
      * Zadania będą wykonywane do momentu aż Wykonawca nie zostanie zamknięty (exec.shutDown())
-     * lub zadanie nie zostanie anulowane (fut.cancel(boolean)), gdzie argument typu boolean informuje, czy zadanie powinno zostać przerwane
+     * lub zadania nie zostaną anulowane (fut.cancel(boolean)), gdzie argument typu boolean informuje, czy zadanie powinno zostać przerwane
      */
 
     public static void scheduledThreadPoolExecutor() throws InterruptedException {
