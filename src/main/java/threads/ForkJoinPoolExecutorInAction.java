@@ -3,6 +3,9 @@ package threads;
 import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 /**
@@ -32,10 +35,10 @@ import java.util.function.UnaryOperator;
 
 public class ForkJoinPoolExecutorInAction {
 
-    private static int size = 100;
 
-    public static void main(String[] args) {
 
+    public static void recursiveActionInUse(){
+        int size = 100;
         Double[] array = new Double[size];
         Arrays.fill(array, 3.5);
 
@@ -55,5 +58,27 @@ public class ForkJoinPoolExecutorInAction {
         //exec2.invoke(task);
         System.out.println("Skradzionych zadań: " + exec.getStealCount());
     }
+
+
+    public static void recursiveTaskInUse(){
+
+        String[] array = {"ARRAY", "BINARY", "CHARACTER", "DIRECTORY", "ENTITY", "FORK",
+                "GRAPH", "HIERARCHY", "INPUTSTREAM", "JAVA", "KEY", "LINE", "MAP",
+                "NIO", "OBJECT", "PREDICATE", "RETURN", "SERIALIZABLE", "TIME", "UTIL", "WRITER", "ZERO"};
+
+        Function<String, Character> oper = (s) -> s.toLowerCase().charAt(0);
+
+        ForkJoinTask task = new MyRecursiveTask(array, 0, array.length, oper);
+        String result =  task.invoke().toString();
+        System.out.println(result);
+    }
+
+    public static void main(String[] args) {
+
+       // recursiveActionInUse();
+        recursiveTaskInUse();
+    }
+
+
 }
 

@@ -13,7 +13,7 @@ import java.util.function.UnaryOperator;
  *
  * W metodzie compute() zawsze sprawdzamy istnienie warunku bazowego (tak, jak to się odbywa przy zwykłym rozwiązaniu zadania rekurencyjnego). Jest nim
  * sytuacja, kiedy długość tablicy którą reprezentuje różnica indeksów 'to' i 'from' będzie mniejsza niż wielkość progu podziału.
- * W sytuacji bazowej wątek rozwiązuje zadaie, wykonując działania  na elementach tablicy.
+ * W sytuacji bazowej wątek rozwiązuje zadanie, wykonując działania  na elementach tablicy.
  * Gdy nie mamy do czynienia z sytuacją bazową, wątek dzieli zadanie na dwa podzadania.
  * Na jednym z nich wywołujemy metodę invoke(), a na drugim metody fork() a następnie join();
  *
