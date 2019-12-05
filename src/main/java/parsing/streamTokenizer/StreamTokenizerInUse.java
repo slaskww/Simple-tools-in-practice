@@ -1,4 +1,4 @@
-package io;
+package parsing.streamTokenizer;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,13 +18,15 @@ import java.util.List;
  * Jeśli symbol jest liczbą, to jego wartość możemy odczytać odnosząc się do zmiennej nval obiektu StreamTokenizer.
  * Jeśli natomiast symbol jest wyrazem, to jego wartość odczytujemy ze zmiennej sval obiektu StreamTokenizer.
  * Jeśli symbol nie jest ani liczbą ani wyrazem, to jest zwykłym znakiem, którego kod jest równy wartości ttype.
+ *
+ * Warto zwrócić uwage na obiekt klasy StringReader, który pobrany łańcuch znaków zamienia w strumień kodów znaków.
  */
 
 public class StreamTokenizerInUse {
 
     public static void main(String[] args) throws IOException {
 
-        String source = String.join("\n", "The 44%%StreamTokenizer $class ", "takes 55 an%input stream and parses it into 66", "//tokens", "allowing+the 77 tokens ", "to be#read one at a@time. 88");
+        String source = String.join("\n", "The 44%%StreamTokenizer $class .8", "takes 55 an%input stream and parses it into 66", "//tokens", "allowing+the 7.7 tokens ", "to be#read one at a@time. 88");
 
 
         System.out.println("source:\n" + source);
@@ -32,8 +34,19 @@ public class StreamTokenizerInUse {
         Reader reader = new StringReader(source); //strumień znakowy, który z łańcucha znaków zwraca strumień kodów znaków.
 
         StreamTokenizer streamTokenizer = new StreamTokenizer(reader);
-        streamTokenizer.slashSlashComments(false);
-        streamTokenizer.slashSlashComments(true);
+        streamTokenizer.slashStarComments(true); //pomijamy komentarze /* ... */
+        streamTokenizer.slashSlashComments(true); //pomijamy komentarze //
+        streamTokenizer.quoteChar('"'); //pomijamy lierały napisowe
+
+        /**
+         * Możemy wskazać, by pojedyncze znaki lub zakres znaków był traktowany jak składowe wyrazu.
+         * Służy do tego metoda wordChars(int low, int high)
+         * Pierwszy element to początek zakresu, drug jest jego końcem,
+         *  np. zakres  wordChars('#', '&') oznacza, że składowymi wyrazu będą znaki #, $, % oraz &.
+         */
+        streamTokenizer.wordChars('_', '_'); //ten znak traktujemy jako składową słowa
+        streamTokenizer.wordChars('.', '.'); //ten znak traktujemy jako składową słowa
+        streamTokenizer.wordChars('$', '$'); //ten znak traktujemy jako składową słowa
 
         List<String> words = new ArrayList<>();
         List<Double> numbers = new ArrayList<>();

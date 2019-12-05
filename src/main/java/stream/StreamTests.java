@@ -18,9 +18,9 @@ public class StreamTests {
          * Następnie z podłańcuchów tworzy strumień (obiekt klasy Stream<String>) .
          */
 
-        String source = "Ala ma 44królikow, 33. zające i 23 fredki. Ile ma łącznie zwierząt?";
+        String source = "Ala ma 44królikow, 33. zające i 23 fredki. Ile ma łączn10e zwierząt?";
 
-        String regex = "\\D+"; //sepratorem będzie pojedynczy jeden lub wiele znaków niebędących liczbą
+        String regex = "\\D+"; //sepratorem będzie jeden lub wiele znaków niebędących liczbą
         Pattern pattern = Pattern.compile(regex);
         Stream<String> splittedStrings = pattern.splitAsStream(source);
 
@@ -28,6 +28,6 @@ public class StreamTests {
                 .mapToInt(s -> Integer.parseInt(s))
                 .sum();
 
-        assertEquals(100, sumOfAnimals);
+        assertEquals(110, sumOfAnimals);
     }
 }

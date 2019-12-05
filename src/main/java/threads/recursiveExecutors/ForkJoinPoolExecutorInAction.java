@@ -8,6 +8,10 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 /**
+ * Wykonawcy ForkJoinPool i zadań ForkJoinTask warto używać, gdy problem można w łatwy sposób zapisać w postacji rekurencyjnej dekompozycji na podproblemy
+ * a każdy z takich równolegle wykonywanych podproblemów posiada wyższa efektywność niż przetwarzanie sekwencyjne. Podzadania takie powinny być od siebie niezależne
+ * (klasy zadań RecursiveTask, RecursiveAction) ale moga też od siebie zależeć (zadanie typu CountedCompleter)
+ *
  * ForkJoinPool jest specjalnym rodzajem wykonawcy. Został stworzony do rozwiązywania zadań rekursywnych, czyli takich,
  * które dadzą się podzielić na mniejsze podzadania i mogą być rozwiązywane niezależnie od siebie.
  *
