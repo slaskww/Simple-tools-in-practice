@@ -1,15 +1,14 @@
-package threads;
+package threads.recursiveExecutors;
 
 import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 /**
- * ForkJoinPool jest specjamnym rodzajem wykonawcy. Został stworzony do rozwiązywania zadań rekursywnych, czyli takich,
+ * ForkJoinPool jest specjalnym rodzajem wykonawcy. Został stworzony do rozwiązywania zadań rekursywnych, czyli takich,
  * które dadzą się podzielić na mniejsze podzadania i mogą być rozwiązywane niezależnie od siebie.
  *
  * Inaczej niż w przypadku ThreadPoolExecutorów, w ForkJoinPool kazdy z wątków realizujących zadania ma
@@ -24,11 +23,11 @@ import java.util.function.UnaryOperator;
  *              a'pod spodem' wywoła metode compute() zadania ForkJoinTask
  *      join() - czeka na zakończenie zadania na którym wcześniej wykonano metodę fork() i może zwrócić jego wynik (w przypadku obiektu RecursiveTask)
  *
- *  Klasa ForkJoinTask jest abstrakcyjna, więc by móc z niej skorzystać, należy zdefiniować jej metody w klasie dziedziczącej.
+ *  Klasa ForkJoinTask jest abstrakcyjna, więc by móc z niej skorzystać, należy zdefiniować jej metody w klasie dziedziczącej po ForkJoinTask.
  *  Alternatywnie możemy skorzystać z trzech gotowych już klas dziedziczących klasę ForkJoinTask:
  *      RecursiveAction - reprezentuje rekursywne zadanie niezwracające wyniku
  *      RecursiveTask - określa reurencyjne zadanie zwracające wynik
- *      CountedCompleter - stosowana gdy kończone zadania sygnalizują możliwość zakończenia innych zadań w hierrarchii zależności zadań
+ *      CountedCompleter - stosowana gdy kończone zadania sygnalizują możliwość zakończenia innych zadań w hierarchii zależności zadań
  *  klasy te rozszerzamy i dodatkowo implementujemy metode compute().
  *
  */
@@ -42,9 +41,9 @@ public class ForkJoinPoolExecutorInAction {
         Double[] array = new Double[size];
         Arrays.fill(array, 3.5);
 
-        MyRecursiveAction<Double> task = new MyRecursiveAction<Double>(array, 0, array.length);
+        TaskAsRecursiveAction<Double> task = new TaskAsRecursiveAction<Double>(array, 0, array.length);
         UnaryOperator<Double> unaryOp = aDouble -> aDouble * 2;
-        MyRecursiveAction.set(3, unaryOp);
+        TaskAsRecursiveAction.set(3, unaryOp);
 
         //przy wykonywaniu zadania korzystamy z tzw. wspólnej puli typu ForkJoinPool. domyślnie jej stopień zrównoleglenia wynosi liczba procesorów - 1
         //task.invoke();
@@ -68,7 +67,7 @@ public class ForkJoinPoolExecutorInAction {
 
         Function<String, Character> oper = (s) -> s.toLowerCase().charAt(0);
 
-        ForkJoinTask task = new MyRecursiveTask(array, 0, array.length, oper);
+        ForkJoinTask task = new TaskAsRecursiveTask(array, 0, array.length, oper);
         String result =  task.invoke().toString();
         System.out.println(result);
     }

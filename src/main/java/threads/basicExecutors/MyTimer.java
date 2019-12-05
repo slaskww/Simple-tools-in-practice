@@ -1,4 +1,4 @@
-package threads;
+package threads.basicExecutors;
 
 /**
  * KOD WYKONUJĄCY SIĘ W WĄTKU określany jest przez obiekt klasy implementującej interfejs funkcyjny RUNNABLE ('uruchamialny') i zawierający deklarację metody run().

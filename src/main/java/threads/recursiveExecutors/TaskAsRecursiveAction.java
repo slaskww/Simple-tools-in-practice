@@ -1,4 +1,4 @@
-package threads;
+package threads.recursiveExecutors;
 
 import java.util.Arrays;
 import java.util.concurrent.RecursiveAction;
@@ -18,15 +18,15 @@ import java.util.function.UnaryOperator;
  * Na jednym z nich wywołujemy metodę invoke(), a na drugim metody fork() a następnie join();
  *
  */
-public class MyRecursiveAction<T> extends RecursiveAction {
+public class TaskAsRecursiveAction<T> extends RecursiveAction {
 
-    private static int THRESHOLD; //próg dzielenia zadania na subzadania
+    private static int THRESHOLD; //próg długosci tablicy powyżej którego dzielimy zadanie na dwa podzadania
     private static UnaryOperator CALC; //zmienna z referencją na implementację interfejsu funkcyjnego UnaryOperator przyjmującego obiekt T i zwracający obiekt tego samego typu
 
     private T[] array;
     private int from, to;
 
-    public MyRecursiveAction(T[] array, int from, int to) {
+    public TaskAsRecursiveAction(T[] array, int from, int to) {
         this.array = array;
         this.from = from;
         this.to = to;
@@ -41,18 +41,17 @@ public class MyRecursiveAction<T> extends RecursiveAction {
     protected void compute() {
 
         if (to - from < THRESHOLD){
-            UnaryOperator<T> calc = MyRecursiveAction.CALC;
+            UnaryOperator<T> calc = TaskAsRecursiveAction.CALC;
             for (int i = from; i < to; i++){
                 array[i] = calc.apply(array[i]);
             }
         } else{
-            int middle = (to + from) /2;
-            System.out.println("middle="+middle);
-            MyRecursiveAction<T> leftSubTask = new MyRecursiveAction<>(array, from, middle);
-            MyRecursiveAction<T> rightSubTask = new MyRecursiveAction<>(array, middle, to);
+            int middle = (to + from) /2; //ustalamy środek podziału tablicy
+            TaskAsRecursiveAction<T> leftSubTask = new TaskAsRecursiveAction<>(array, from, middle); //tworzymy podzadanie dla lewej części tablicy
+            TaskAsRecursiveAction<T> rightSubTask = new TaskAsRecursiveAction<>(array, middle, to); //tworzymy podzadanie dla prawej części tablicy
 
             leftSubTask.invoke(); //wątek zajmie się tym zadaniem, wywołuje compute()
-            rightSubTask.fork(); //to zadanie zostanie dodane do kolejki i wykonane asynchronicznie, inny wątek może je 'ukrasc'
+            rightSubTask.fork(); // zadanie  rightSubTask zostanie dodane do kolejki i wykonane asynchronicznie, inny wątek może je 'ukrasc' i wykonać
             rightSubTask.join(); //gdy zadanie zostanie zakończone, nastąpi złączenie rezultatów podzadań
         }
 

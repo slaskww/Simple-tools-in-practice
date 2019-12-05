@@ -1,7 +1,12 @@
-package threads;
+package threads.recursiveExecutors;
 
 
 import java.util.concurrent.ForkJoinPool;
+
+/**
+ * CountedCompleter jest klasa zadania dziedziczącą po abstrakcyjnej klasie ForkJoinTask
+ * Specyfika takich zadań polega na tym, że mogą wyzwalać kończenie innych zadać typu CountedCompleter.
+ */
 
 public class CountedCompleterInAction {
 

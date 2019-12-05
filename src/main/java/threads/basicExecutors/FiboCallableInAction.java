@@ -1,4 +1,4 @@
-package threads;
+package threads.basicExecutors;
 
 import java.util.ArrayList;
 import java.util.Iterator;

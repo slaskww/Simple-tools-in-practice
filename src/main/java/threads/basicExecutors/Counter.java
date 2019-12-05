@@ -1,4 +1,4 @@
-package threads;
+package threads.basicExecutors;
 
 public class Counter implements Runnable {
 

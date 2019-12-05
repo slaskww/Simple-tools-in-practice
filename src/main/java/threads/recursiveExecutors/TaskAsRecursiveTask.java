@@ -1,4 +1,4 @@
-package threads;
+package threads.recursiveExecutors;
 
 import java.util.concurrent.RecursiveTask;
 import java.util.function.Function;
@@ -15,7 +15,7 @@ import java.util.function.Function;
  *  Łączymy rezultaty metod invoke() i join() i zwracamy wynik.
  */
 
-public class MyRecursiveTask extends RecursiveTask<StringBuilder> {
+public class TaskAsRecursiveTask extends RecursiveTask<StringBuilder> {
 
     private static int THRESHOLD = 3;
 
@@ -24,7 +24,7 @@ public class MyRecursiveTask extends RecursiveTask<StringBuilder> {
     int from, to;
 
 
-    public MyRecursiveTask(String[] array, int from, int to,  Function<String, Character> oper) {
+    public TaskAsRecursiveTask(String[] array, int from, int to, Function<String, Character> oper) {
         this.array = array;
         this.from = from;
         this.to = to;
@@ -43,8 +43,8 @@ public class MyRecursiveTask extends RecursiveTask<StringBuilder> {
             return sb;
         } else{
             int middle = (from + to) / 2;
-            MyRecursiveTask left = new MyRecursiveTask(array, from, middle, oper);
-            MyRecursiveTask right = new MyRecursiveTask(array, middle, to, oper);
+            TaskAsRecursiveTask left = new TaskAsRecursiveTask(array, from, middle, oper);
+            TaskAsRecursiveTask right = new TaskAsRecursiveTask(array, middle, to, oper);
 
             right.fork();
            return left.invoke().append(right.join());
