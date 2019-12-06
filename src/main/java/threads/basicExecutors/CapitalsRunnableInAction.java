@@ -50,6 +50,6 @@ public class CapitalsRunnableInAction {
                 answers.add(input);
             }
         }
-
+        thread.interrupt(); //wywołanie metody interrupt ustawia flagę przerwania, nie przerywa kodu wątku. O samo przerwanie trzeba zadbać w kodzie metody run()
     }
 }
