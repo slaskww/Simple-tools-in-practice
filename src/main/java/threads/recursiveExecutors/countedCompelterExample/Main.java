@@ -7,7 +7,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        File file = new File("C:/Users/CP24/Desktop/SimpleToolsInPractice");
+        String path = "C:/Users/CP24/Desktop/SimpleToolsInPractice";
+
+        File file = new File(path);
         ProcessDirectory processDirectory = new ProcessDirectory(null, file);
         processDirectory.invoke();
         Map<String, Integer> result = processDirectory.getRawResult();

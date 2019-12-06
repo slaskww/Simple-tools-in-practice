@@ -7,6 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountedCompleter;
 
+/**
+ * Zadanie ProcessDirectory przegląda dany katalog i uruchamioa asynchronicznie zadania ProcessFile dla plików .java z tego katalogu
+ * oraz zadania ProcessDirectory dla podkatalogów.
+ * Zadania ProcessDirectory i ProcessFile umieszczamy na liście, by na koniec móc się do nich odwołać i zebrać wyniki.
+ */
+
 public class ProcessDirectory extends CountedCompleter<Map<String, Integer>> {
 
     private ProcessDirectory parent;
@@ -20,6 +26,17 @@ public class ProcessDirectory extends CountedCompleter<Map<String, Integer>> {
         this.parent = parent;
         this.directory = directory;
     }
+
+    /**
+     * Dla danego katalogu pobieramy wszystkie jego podkatalogi i pliki jako tablicę obiektow File.
+     * Przechodzimy przez elementy tablicy i
+     *      -jeśli obiekt File jest plikiem, i jego nazwa kończy się na ".java"
+     *      to uruchamiamy asynchronicznie (fork) podzadanie zliczające słowa kluczowe a zadanie to dodajemy do listy podzadań plikowych.
+     *      Naturalnie musimy zwiększyć pending o 1, dla każdego takiego pozadania.
+     *      - jeśli obiekt jest katalogiem, tworzymy i uruchamiamy asynchronicznie (fork) podzadanie dla katalogu, dodajemy podzadanie do listy podzadań katalogowych
+     *      i zwiększamy pending
+ *      Na końcu wywołujemy metodę tryComplete()
+     */
 
     @Override
     public void compute() {
@@ -44,30 +61,39 @@ public class ProcessDirectory extends CountedCompleter<Map<String, Integer>> {
        this.tryComplete();
     }
 
+    /**
+     * W strumieniu dla każdego zadania ProcessFile i ProcessDirectory wywołujemy metodę zwracającą wynik,
+     * a następnie wynik wykorzystujemy jako argument w metodzie złączającej.
+     */
+
     @Override
     public void onCompletion(CountedCompleter<?> countedCompleter) {
 
-        for (ProcessDirectory pd: subdirectories){
-            Map<String, Integer> pdmap =  pd.getRawResult();
-            if (!pdmap.isEmpty()){
-                for (String key : pdmap.keySet()){
-                    this.result.merge(key, pdmap.get(key), (integer, integer2) -> integer + integer2);
-                }
-            }
-        }
-
-        for (ProcessFile pf : subFiles){
-            Map<String, Integer> pfmap =  pf.getRawResult();
-            if (!pfmap.isEmpty()){
-                for (String key : pfmap.keySet()){
-                    this.result.merge(key, pfmap.get(key), (integer, integer2) -> integer + integer2);
-                }
-            }
-        }
+        subFiles.stream().forEach(processFile -> mergeResults(processFile.getRawResult()));
+        subdirectories.stream().forEach(processFile -> mergeResults(processFile.getRawResult()));
     }
+
+
 
     @Override
     public Map<String, Integer> getRawResult() {
         return result;
+    }
+
+    /**
+     * Metoda łączy dwie mapy, tzn do mapy result zostanie dołączona zawartość mapy map2
+     * Wykorzystuje tutaj  metodę merge wywołaną na mapie result.
+     * Pierwszym argumentem metody merge() jest nazwa klucza. Metoda sprawdza, czy w mapie result występuje taki klucz i jaka jest wartość odwzorowana dla tego klucza.
+     * Jeśli wartość jest null, lub mapa nie posiada odwzorowania dla tego klucza, to dodawana jest nowa para klucz - wartość, gdzie
+     * kluczem jest key, a wartością drugi parametr metody merge().
+     * Jeśli mapa posiada odwzorowanie tego klucza i wartość nie jest null, to wartość ta zostanie zastąpiona wynikiem funkcji podanej jako trzeci argument metody merge().
+     */
+
+    private void mergeResults(Map<String, Integer> map2){
+            if (!map2.isEmpty()){
+                for (String key : map2.keySet()){
+                    this.result.merge(key, map2.get(key), (integer, integer2) -> integer + integer2);
+                }
+            }
     }
 }
