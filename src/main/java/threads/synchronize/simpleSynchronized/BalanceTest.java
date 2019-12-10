@@ -1,4 +1,5 @@
-package threads.synchronize;
+package threads.synchronize.simpleSynchronized;
+
 
 import java.util.concurrent.*;
 
@@ -10,8 +11,6 @@ public class BalanceTest {
         Balance balance = new Balance();
         ExecutorService exec = Executors.newCachedThreadPool();
 
-
-        int result = 0;
         for (int i = 1; i <= 4; i++) {
             exec.execute(new BalanceFuture(new BalanceTask(balance, 100000), "T" + i));
         }

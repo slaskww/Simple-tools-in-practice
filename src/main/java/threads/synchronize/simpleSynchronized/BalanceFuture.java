@@ -1,4 +1,4 @@
-package threads.synchronize;
+package threads.synchronize.simpleSynchronized;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;

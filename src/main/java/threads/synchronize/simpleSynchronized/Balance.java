@@ -1,10 +1,10 @@
-package threads.synchronize;
+package threads.synchronize.simpleSynchronized;
 
 public class Balance {
 
     private int n = 0;
 
-    public int balance(){
+    synchronized public int balance(){
         n++;
         n++;
         n--;

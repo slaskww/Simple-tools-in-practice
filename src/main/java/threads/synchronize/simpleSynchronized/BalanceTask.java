@@ -1,4 +1,6 @@
-package threads.synchronize;
+package threads.synchronize.simpleSynchronized;
+
+import threads.synchronize.simpleSynchronized.Balance;
 
 import java.util.concurrent.Callable;
 
