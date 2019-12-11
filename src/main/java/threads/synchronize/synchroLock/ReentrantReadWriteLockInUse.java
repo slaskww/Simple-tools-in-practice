@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Obiekt rygla ReentrantReadWriteLock umożliwia warunkowe synchronizowanie dostępu do zasobu.
- * Tworzac instancję tej klasy możemy z niej pobrać bloker dla odczytu readLock() i zapisu writeLock().
+ * Tworzac instancję tej klasy możemy z niej pobrać obiekty blokera dla odczytu readLock() i zapisu writeLock().
  * Rygiel do czytania (readLock) będzie działał blokująco na sekcji krytycznej jedynie w sytuacji
  * gdy równolegle zamknięty jest rygiel do zapisu (writeLock).
  * W przeciwnym wypadku synchronizacji przy odczycie nie będzie.
