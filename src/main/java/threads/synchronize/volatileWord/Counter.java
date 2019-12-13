@@ -12,7 +12,7 @@ import java.util.concurrent.Executors;
  * Jeśli jednak wykonujemy operacje, które nie są atomowe (np. operację inkrementacji, która wymaga operacji odczytu aktualnej wartości a następnie przypisania nowej wartości)
  * powinniśmy oprócz volatile uczynić taką operację synchronizowaną (poprzez blok synchronized lub metode synchronizowaną).
  *
- * Alternatywnie możemy skorzystać z jednej z klas z biblioteki java.util.concurrent.atomic
+ * Alternatywnie możemy skorzystać z jednej z klas biblioteki java.util.concurrent.atomic pozwalających pracować na obiektach AtomicInteger, AtomicLong i AtomicBoolean
  */
 
 public class Counter {
