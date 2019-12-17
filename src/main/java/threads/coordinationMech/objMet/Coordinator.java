@@ -9,7 +9,7 @@ public class Coordinator {
 
     public synchronized void write(String txt) throws InterruptedException {
 
-        while(isNew) this.wait();
+        while(isNew) this.wait(); //wątek zostaje zatrzymany jeśli jest nowy tekst i inny wątek go jeszcze nie pobrał i nie wywołał met. notify()
         this.txt = txt;
         isNew = true;
         this.notify();
@@ -17,7 +17,7 @@ public class Coordinator {
 
     public synchronized String read() throws InterruptedException {
 
-        while(!isNew) wait();
+        while(!isNew) wait(); //wątek zostaje zatrzymany jeśli nie ma nowego tekstu do pobrania i inny wątek nie wywołał met. notify()
         isNew = false;
         this.notify();
         return txt;
