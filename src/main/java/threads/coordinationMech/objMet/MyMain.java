@@ -22,6 +22,8 @@ import java.util.concurrent.Executors;
  *      -notify() odblokowuje jeden z oczekujących wątków (może to byc dowolny z nich), notifyAll() odblokowuje wszystkie wątki czekające na obiekcie O
  *      -metody notify() i notifyAll() również powinny być wywołane w sekcji krytycznej
  *
+ *  Warunek zakończenia oczekiwania (stan flagi) należy sprawdzać w pętli .
+ *
  *      Przykład opiera się na dwóch wątkach wykonujących zadanie typu Runnable (MrWriter i MrReader). Każdy zwątków operuje na tym samym obiekcie Coordinator.
  *      Zmiana stanu obiektu Coordinator dokonana przez jeden wątek wywołuje interakcję drugiego wątku w postaci odczytu tej zmiany.
  *      Odczyt powoduje interakcję watku pierwszego i kolejną zmianę stanu obiektu Coordinator, itd.
