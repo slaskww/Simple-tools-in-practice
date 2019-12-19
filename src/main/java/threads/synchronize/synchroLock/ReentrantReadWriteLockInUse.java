@@ -16,6 +16,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * Alternatywnie do ReadWriteLock możemy korzystać z blokera StampedLock.
  *
+ * Rygiel powinniśmy otwierać w bloku finally
  */
 
 public class ReentrantReadWriteLockInUse {

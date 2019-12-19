@@ -19,6 +19,8 @@ import java.util.concurrent.locks.ReentrantLock;
  *          2. Zamykamy rygiel wywołują metode lock()
  *          3. Wykonywany jest kod sekcji krytycznej
  *          4. Otwieramy rygiel metoda unlock()
+ *
+ * Rygiel powinniśmy otwierać w bloku finally
  */
 
 public class ReentrantLockInUSe {

@@ -17,9 +17,9 @@ import java.util.concurrent.Executors;
  *      -wątek A wywołuje metodę wait() na rzecz obiektu O, oczekując zmiany stanu tego obiektu (zmiany wartości pól obiektu dokonanej przez inny wątek)
  *      -wywolanie tej metody blokuje wątek A (odsuwa go od procesora) a jednocześnie zwalnia rygiel na obiekcie O, udostępniając go innym wątkom
  *      -wywołanie metody wait() wywołujemy w sekcji krytycznej (metodzie synchronized), w której obiekt O jest ryglowany
- *      -teraz wątek B może zmienić stan obiektu O i wywołać na nim metode notify() powiadamianąc wątek oczekujący o dokonanej zmianie
+ *      -teraz wątek B może zmienić stan obiektu O i następnie wywołać na nim metode notify() powiadamiając wątek oczekujący A o dokonanej zmianie
  *      -odblokowanie ze stanu wait nastepuje również w wypadku gdy rzucony zostanie wyjątek InterruptedException (w sytuacji gdy wątek otrzyma sygnał interrupt)
- *      -notify() odblokowuje jeden z oczekujących wątków (może to byc dowolny z nich), notifyAll() odblokowuje wszystkie wątki czekające na obiekcie O
+ *      -notify() odblokowuje jeden z oczekujących wątków (jeśli jest ich kilka, może to byc dowolny z nich), notifyAll() odblokowuje wszystkie wątki czekające na obiekcie O
  *      -metody notify() i notifyAll() również powinny być wywołane w sekcji krytycznej
  *
  *  Warunek zakończenia oczekiwania (stan flagi) należy sprawdzać w pętli .
