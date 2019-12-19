@@ -1,6 +1,5 @@
 package threads.synchronize.synchroLock;
 
-import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -10,6 +9,7 @@ import java.util.stream.IntStream;
 
 /**
  * Klasa StampedLock odznacza się lepszą efektywnością niż ReadWriteLock.
+ * Posiada metode tryOptimisticRead(), która nie działa blokująco na kod modyfikujący, a dodatkowo pozwala odczytać dane, gdy założona jest blokada writeLock.
  * W odróżnieniu do ReadWriteLock, StampedLock nie implementuje interfejsu Lock.
  * Nie powinniśmy używać tej klasy do wywołań rekurencyjnych.
  *
@@ -21,8 +21,8 @@ import java.util.stream.IntStream;
  *
  * Metoda tryOptimisticRead() pozwala na postawienie rygla optymistycznego. Zakłada się tutaj, że modyfikacje danych i ich odczyt rzadko nakładają się na siebie.
  * Wobec tego możemy próbować odczytać dane nawet, jeśli rygiel writeLock jest zamknięty. Po pobraniu danych dokonujemy walidacji tych danyc metodą validate(stamp).
- * Jeśli metoda zwróci true, dane nie zostaly zmienione i możemy odczytane dane wykorzystać. Jeśli zwróci false (co oznacza, że rygiel zapisu jest zamknięty),
- * ustawiamy readLock i czekamy na to, aż inny wątek otworzy rygiel zapisu.
+ * Jeśli metoda zwróci true, dane nie zostaly zmienione po naszym odczycie i możemy odczytane dane wykorzystać. Jeśli zwróci false (co oznacza, że dane zostały zmienione po naszym odczycie),
+ * ustawiamy readLock w oczekiwaniu na to, aż inny wątek zwolni rygiel zapisu.
  *
  * StampedLock posiada metodę umożliwiającą konwersję  tryb ryglowania z Read na Write tryConvertToWriteLock(stamp). Po co?
  * Jeśli chcielibyśmy zmienić stan obiektu (wartości jego pól) gdy spełnia określone warunki, to wypadałoby najpierw odczytać ten stan i wtedy dokonac porównania.

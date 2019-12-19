@@ -11,12 +11,18 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Rygiel do czytania (readLock) będzie działał blokująco na sekcji krytycznej jedynie w sytuacji
  * gdy równolegle zamknięty jest rygiel do zapisu (writeLock).
  * W przeciwnym wypadku synchronizacji przy odczycie nie będzie.
+ * Rygiel do odczytu (readLock) blokuje kod sekcji krytycznej próbujący zamknać rygiel do zapisu (writeLock).
+ *
  * Mechanizm ten jest szczególnie przydatny w sytuacjach, gdy równolegle działających operacji odczytu jest znacząco
  * więcej niż operacji modyfikujących.
+ * Może się zdarzyć, że i w takiej sytuacji uzyskamy małą efektywność, a blokada wątków modyfikujących przez rygiel do odczytu
+ * spowoduje ich 'zagłodzenie'.
+ * Rozwiązaniem dla tego problemu będzie skorzystanie z obiektu klasy StampedLock i metody tryOptimisticRead(), która nie blokuje dostępu do sekcji zapisu.
  *
  * Alternatywnie do ReadWriteLock możemy korzystać z blokera StampedLock.
  *
- * Rygiel powinniśmy otwierać w bloku finally
+ * Rygiel powinniśmy otwierać w bloku finally by mieć pewność, że rygie ten zostanie odblokowany także w sytuacji w której kod sekcji krytycznej wyrzuciłby wyjątek.
+ * Bez użycia bloku finally narazilibyśmy się na ryzyko nieotwarcia się rygla (wskutek wyrzuconego wyjątku) a tym samym zablokowania innych wątków, czekających na otwarcie rygla.
  */
 
 public class ReentrantReadWriteLockInUse {

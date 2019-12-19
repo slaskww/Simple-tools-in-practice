@@ -20,7 +20,8 @@ import java.util.concurrent.locks.ReentrantLock;
  *          3. Wykonywany jest kod sekcji krytycznej
  *          4. Otwieramy rygiel metoda unlock()
  *
- * Rygiel powinniśmy otwierać w bloku finally
+ * Rygiel powinniśmy otwierać w bloku finally by mieć pewność, że rygie ten zostanie odblokowany także w sytuacji w której kod sekcji krytycznej wyrzuciłby wyjątek.
+ * Bez użycia bloku finally narazilibyśmy się na ryzyko nieotwarcia się rygla (wskutek wyrzuconego wyjątku) a tym samym zablokowania innych wątków, czekających na otwarcie rygla.
  */
 
 public class ReentrantLockInUSe {
