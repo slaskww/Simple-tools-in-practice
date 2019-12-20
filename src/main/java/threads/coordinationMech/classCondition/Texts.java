@@ -5,7 +5,19 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * Alternatywą dla mechnanizmu wait-notify jest mechanizm przy użyciu metod klasy Condition z biblioteki java.util.concurrent.
+ * Obiekty warunków (Condition) pobieramy z obiektu Lock. Tak więc tworzone warunki zawsze osadzone są w kontekście jakiejś blokady.
+ * Obiekty warunków posiadają dwie kluczowe metody:
+ *      - await() zatrzymujący bieżący wątek do czasu, aż inny wątek nie wywoła na rzecz tego warunku metody signal()
+ *      -signal() - metoda budzi watek, w którym wcześniej została wywołana metoda await()
+ *      -signalAll() - budzi wszystkie czekajace wątki
  *
+ *  Uwaga: samo wywołanie metody signal() mimo, że budzi wątek, nie sprawia, że ma on automatyczny dostęp do sekcji krytycznej.
+ *  Musi on zaczekać, aż bieżący wątek otworzy blokadę i udostępni tę sekcję.
+ *  Opisowe przedstawienie działania mechanizmu Lock i condition zawiera klasa ConditionInDetails.
+ *
+ * lock() zakłada blokade na sekcję krytyczną (w naszym przykładzie jedną sekcję tworzą oba bloki  kodu zawierające lock() - unlock() ),
+ * więc pozostałe wątki muszą czekać na jej zwolnienie, bądź na wywołanie metody await().
  */
 
 public class Texts {

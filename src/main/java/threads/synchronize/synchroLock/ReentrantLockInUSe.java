@@ -16,7 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  *      Schemat działania obiektu rygla wygląda nastepująco:
  *          1. Tworzymy obiekt rygla
- *          2. Zamykamy rygiel wywołują metode lock()
+ *          2. Zamykamy rygiel wywołując metode lock(), blokujemy dostęp do sekcji krytycznej którą tworzą w naszym przykładzie metody increase() i decrease()
  *          3. Wykonywany jest kod sekcji krytycznej
  *          4. Otwieramy rygiel metoda unlock()
  *
@@ -41,15 +41,32 @@ public class ReentrantLockInUSe {
 
         try{
 
-            System.out.println("Thread " + name + ": initial value = " + number);
+            System.out.println("\tThread " + name + ": initial value = " + number);
             number++;
             Thread.sleep(1000);
-            System.out.println("Thread " + name + ": increased value = " + number);
+            System.out.println("\tThread " + name + ": increased value = " + number);
 
         } finally {
             lock.unlock(); // otwieramy rygiel w bloku finally, by zapewnić zwolnienie blokady w każdych warunkach, również w przypadku wystąpienia wyjątku w sekcji krytycznej
         }
     }
+
+    private void decrease(String name) throws InterruptedException {
+
+
+        lock.lock(); // zamykamy rygiel i dalej wykonujemy kod sekcji krytycznej
+
+        try{
+            System.out.println("Thread " + name + ": initial value = " + number);
+            number--;
+            //Thread.sleep(500);
+            System.out.println("Thread " + name + ": decreased value = " + number);
+
+        } finally {
+            lock.unlock(); // otwieramy rygiel w bloku finally, by zapewnić zwolnienie blokady w każdych warunkach, również w przypadku wystąpienia wyjątku w sekcji krytycznej
+        }
+    }
+
 
     public void executeThreads(int tnumber){
 
@@ -57,14 +74,22 @@ public class ReentrantLockInUSe {
 
         for (int i = 0; i < tnumber; i++){
             int n = i+1;
-            Runnable runnable = () -> {
+            Runnable runnableInc = () -> {
                 try {
                     increase(""+n);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             };
-            exec.execute(runnable);
+            Runnable runnableDec = () -> {
+                try {
+                    decrease(""+n);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            };
+            exec.execute(runnableInc);
+            exec.execute(runnableDec);
         }
         exec.shutdown();
     }
