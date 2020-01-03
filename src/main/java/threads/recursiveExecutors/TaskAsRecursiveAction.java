@@ -5,8 +5,10 @@ import java.util.concurrent.RecursiveAction;
 import java.util.function.UnaryOperator;
 
 /**
- * Tworzymy klasę zadania typu ForkJoinTask. Korzystamy z gotowej abstrakcyjnej klasy RecursiveAction posiadającej
- * jedną abstrakcyjną metode compute(), którą musimy zaimplementować. Zadania tego typu nie zwracają wyniku.
+ * (1a)
+ * Tworzymy klasę zadania typu ForkJoinTask (jego impelentację w postaci RecursiveAction).
+ * Korzystamy z gotowej abstrakcyjnej klasy RecursiveAction posiadającej jedną abstrakcyjną metode compute(), którą musimy zaimplementować.
+ * Zadania tego typu nie zwracają wyniku.
  *
  * Zadanie polega na zmianie wartość wszystkich elementów tablicy wartości double.
  * Metoda set() ustawia próg podziału zadania na mniejsze podzadania oraz przypisuje referencję do implementacji interfejsu modyfikującego elementy tablicy
@@ -55,6 +57,6 @@ public class TaskAsRecursiveAction<T> extends RecursiveAction {
             rightSubTask.join(); //gdy zadanie zostanie zakończone, nastąpi złączenie rezultatów podzadań
         }
 
-        System.out.println(Arrays.toString(array) + " w ");
+        System.out.println(Arrays.toString(array));
     }
 }

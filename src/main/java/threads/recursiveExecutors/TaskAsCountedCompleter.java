@@ -3,9 +3,10 @@ package threads.recursiveExecutors;
 import java.util.concurrent.CountedCompleter;
 
 /**
+ * (2)
  * CountedCompleter jest klasa zadania dziedziczącą po abstrakcyjnej klasie ForkJoinTask
- * Specyfika takich zadań polega na tym, że mogą wyzwalać kończenie innych zadać typu CountedCompleter.
- *  np. subzadanie zadania task (nazwijmy je subTask) może wywołać zakonczenie zadania task wywołując jego metode tryComplete() a pośrednio metodę onCompletion().
+ * Specyfika takich zadań polega na tym, że mogą wyzwalać kończenie innych zadań typu CountedCompleter.
+ *  np. subzadanie zadania task (nazwijmy je subTask) może wywołać zakonczenie zadania task wywołując jego metode tryComplete() a pośrednio metodę onCompletion() jesli licznik zadań w toku (pending) = 0.
  *  CountedCompleter posiada abstrakcyjną metode obliczeniową compute(), którą nadpisujemy.
  *  W zadaniu nadpisujemy metody:
  *      -compute() abstrakcyjna metode obliczeniową
@@ -17,9 +18,9 @@ import java.util.concurrent.CountedCompleter;
  *
  * Podobnie jak w przypadku zadań typu RecursiveTask i RecursiveAction, wywołanie metody invoke() na obiekcie CountedCompleter (w metodzie main) wywołuje metodę obliczeniową compute().
  * W naszym przykładzie zadanie przyjmuje w konstruktorze licznik zadań do wykonania, obiekt zadania nadrzędnego (parent) i id zadania.
- * Metoda obliczeniowa coumpute() sprawdza czy licznik jest większy od 0, jeśli tak, to tworzy i uruchamia asynchronicznie nowe podzadanie.
+ * Metoda obliczeniowa compute() sprawdza czy licznik jest większy od 0, jeśli tak, to tworzy i uruchamia asynchronicznie nowe podzadanie.
  * Ustawia wartość zmiennej pending odzwierciedlającej liczbę podzadań w toku dla bieżącego zadania (setPendingCount()). Następnie wywouje metode tryComplete().
- *      Podzadanie otrzymuje w konstruktorze zdekrementowany licznik zadań i w metodzie compute() sprawdza czy jego wartość jest większa od 0.
+ *      Podzadanie otrzymuje w konstruktorze zdekrementowany licznik zadań, obiekt zadania nadrzędnego (parent) i id zadania, a w metodzie compute() sprawdza czy jego wartość jest większa od 0.
  *      Jeśli tak jest, tworzy podzadanie i uruchamia je asynchronicznie. Zadanie to otrzymuje w konstruktorze zdekrementowany licznik, obiekt zadania nadrzędnego (parent) i id zadania.
  *      Następnie metoda compute() wywouje metode tryComplete()
  *          Sytuacja się powtarza (tworzone sa nowe zadania, wywoływana jest metoda compute() i tryComplete()) dopóki licznik zadań jest większy od 0;
@@ -59,15 +60,15 @@ public class TaskAsCountedCompleter extends CountedCompleter<String> {
             char subTaskId = (char)(taskId + 1);
             TaskAsCountedCompleter toFork = new TaskAsCountedCompleter(this, subTaskId , --taskCount);
             toFork.fork();
-            subTask = toFork;
+            subTask = toFork; //zapamiętujemy referencję do podzadania
             setPendingCount(1); //ustawiamy wartość zmiennej pending, która odzwierciedla liczbę podzadań do zakończenia dla zadania 'this'. W tym przypadku mamy jedno podzadanie (toFork) więc pending = 1
 
         }
 
         /**
-         * Sztucznie opóźniamy dalsze wykonanie metody compute(), by uzyskać efekt w którym podzadanie toFork zakończy działanie przed poniższym blokiem kodu metody compute().
+         * Dla tasku K sztucznie opóźniamy dalsze wykonanie metody compute(), by uzyskać efekt w którym podzadanie toFork (TaskL) zakończy działanie przed poniższym blokiem kodu metody compute().
          * Usypiamy wątek realizujący bieżące zadanie, jeśli zadanie to ma id = 'K'.
-         * Poskutkuje to tym, że zadanie toFork wyzeruje wartość zmiennej pending swojego parenta (zadanie this)
+         * Poskutkuje to tym, że zadanie TaskL wyzeruje wartość zmiennej pending swojego parenta (zadanie this, czyli TaskK)
          * zanim zdąży zrobić to metoda tryComplete w biezącej metodzie compute().
          * Wywołanie tryComplete() w bieżącej metodzie complete() wywoła więc metode onCompletion() z argumetentem równym zadnaniu this.
          */
@@ -100,9 +101,9 @@ public class TaskAsCountedCompleter extends CountedCompleter<String> {
         System.out.println("Zadanie " + this
                 + " zakończone. Metodę kończącą onCompletion() wywołało zadanie "
                 + caller + (caller != this ? " (podzadanie)" : " (bieżące zadanie)"));
-        if (caller != this){
+        if (caller != this){ //jeśli zadanie, które wywołało onCompletion nie jest zadaniem biezącym (musi być jego podzadaniem)
             result += caller.getRawResult();
-        } else if (subTask != null){
+        } else if (subTask != null){ //w przeciwnym razie jeśli zadanie, które wywołało onCompletion  jest zadaniem biezącym, to sprawdzamy, czy zadanie bieżące ma jakieś podzadania
             result += subTask.getRawResult();
         }
 

@@ -35,7 +35,7 @@ public class ProcessFile extends CountedCompleter<Map<String, Integer>> {
             streamTokenizer.wordChars('$', '$');
 
 
-            while ((streamTokenizer.nextToken()) != StreamTokenizer.TT_EOF){
+            while ((streamTokenizer.nextToken()) != StreamTokenizer.TT_EOF){ //petla wykonuje się do momentu, aż napotka na koniec pliku
                 if (streamTokenizer.ttype == StreamTokenizer.TT_WORD){
                    String word = streamTokenizer.sval;
                    Integer num = result.get(word); //pobieramy biezącą liczbę wystąpień danego wyrazu

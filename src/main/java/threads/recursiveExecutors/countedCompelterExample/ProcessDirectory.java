@@ -19,7 +19,7 @@ public class ProcessDirectory extends CountedCompleter<Map<String, Integer>> {
     private File directory;
     private List<ProcessDirectory> subdirectories = new ArrayList<>(); //lista zadań przetwarzanących podkatalogi dla danego katalogu
     private List<ProcessFile> subFiles = new ArrayList<>(); //lista zadań przetwarzanących pliki w danym katalogu
-    private Map<String, Integer> result = new HashMap<>();
+    private Map<String, Integer> result = new HashMap<>(); //rezultat zebrany z plików katalogu bieżącego i plików z jego podkatalogów
 
     public ProcessDirectory(ProcessDirectory parent, File directory) {
         super(parent);
@@ -43,14 +43,14 @@ public class ProcessDirectory extends CountedCompleter<Map<String, Integer>> {
 
        File[] flist = directory.listFiles();
 
-       if (flist != null && flist.length != 0){
+       if (flist != null && flist.length != 0){ //jeśli w katalogu są jakies inne katalogi lub pliki...
            for(File f : flist){
-               if (f.isFile() && f.getName().endsWith(".java")){
+               if (f.isFile() && f.getName().endsWith(".java")){ //jesli jest plikiem, stworz podzadanie dla pliku
                    ProcessFile pf = new ProcessFile(this, f);
                    this.addToPendingCount(1);
                    pf.fork();
                    subFiles.add(pf);
-               } else if (f.isDirectory()){
+               } else if (f.isDirectory()){  //jesli jest katalogiem, stworz podzadanie dla katalogu
                    ProcessDirectory pd = new ProcessDirectory(this, f);
                    this.addToPendingCount(1);
                    pd.fork();

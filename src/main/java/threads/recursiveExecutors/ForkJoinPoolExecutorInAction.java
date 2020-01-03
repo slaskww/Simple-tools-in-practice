@@ -7,7 +7,7 @@ import java.util.concurrent.ForkJoinTask;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-/**
+/**(1)
  * Wykonawcy ForkJoinPool i zadań ForkJoinTask warto używać, gdy problem można w łatwy sposób zapisać w postacji rekurencyjnej dekompozycji na podproblemy
  * a każdy z takich równolegle wykonywanych podproblemów posiada wyższa efektywność niż przetwarzanie sekwencyjne. Podzadania takie powinny być od siebie niezależne
  * (klasy zadań RecursiveTask, RecursiveAction) ale moga też od siebie zależeć (zadanie typu CountedCompleter)
@@ -40,7 +40,7 @@ public class ForkJoinPoolExecutorInAction {
 
 
 
-    public static void recursiveActionInUse(){
+    public static void recursiveActionInUse(){ // RecursiveAction - reprezentuje rekursywne zadanie niezwracające wyniku
         int size = 100;
         Double[] array = new Double[size];
         Arrays.fill(array, 3.5);
@@ -72,14 +72,14 @@ public class ForkJoinPoolExecutorInAction {
         Function<String, Character> oper = (s) -> s.toLowerCase().charAt(0);
 
         ForkJoinTask task = new TaskAsRecursiveTask(array, 0, array.length, oper);
-        String result =  task.invoke().toString();
+        String result =  task.invoke().toString(); //rezultat jest typu StringBuilder więc wyłuskujemy z niego łańcuch znaków
         System.out.println(result);
     }
 
     public static void main(String[] args) {
 
-       // recursiveActionInUse();
-        recursiveTaskInUse();
+        recursiveActionInUse();
+        //recursiveTaskInUse();
     }
 
 
