@@ -7,6 +7,10 @@ import java.util.concurrent.*;
 
 import static org.junit.Assert.*;
 
+/**
+ * (4)
+ */
+
 public class RepeatedTaskTest {
 
     /**
@@ -19,31 +23,16 @@ public class RepeatedTaskTest {
     public void shouldNotRepeatAlreadyExecutedFutureTask(){
 
         Executor exec = Executors.newSingleThreadExecutor();
-        Callable<String> callableTask = () -> {
-            String res = "";
-            for (int i = 0; i < 3; i++){
-                res += LocalTime.now() + " ";
-            }
-            return res;
-        };
+        Callable<String> callableTask = getCallable();
 
         FutureTask<String> futureTask = new FutureTask<>(callableTask);
         exec.execute(futureTask);
-        String result = "";
-        try {
-            result = futureTask.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        exec.execute(futureTask);
-        String repeatedResult = "";
-        try {
-            repeatedResult = futureTask.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        String result = getRes(futureTask);
 
-        assertEquals(result, repeatedResult);
+        exec.execute(futureTask);
+        String repeatedResult = getRes(futureTask);
+
+        assertEquals(result, repeatedResult); //repeatedResult ma wartość result, co oznacza, że ponowna próba wykonania zadania nie powiodła się, został zwrócony wynik zadania pierwotnie wykonanego
     }
 
     /**
@@ -56,7 +45,20 @@ public class RepeatedTaskTest {
     public void shouldRepeatAlreadyExecutedTaskAsNewFutureTask(){
 
         ExecutorService exec = Executors.newSingleThreadExecutor();
-        Callable<String> task = () -> {
+        Callable<String> task = getCallable();
+
+        Future<String> fut = exec.submit(task);
+        String firstResult = getRes(fut);
+
+        fut = exec.submit(task);
+        String secondResult = getRes(fut);
+
+        assertNotEquals(secondResult, firstResult); //wyniki są różnie, co oznacza, że egzekutor wykonał dwa zadania
+
+    }
+
+    private Callable<String> getCallable(){
+        return () -> {
             String result = "";
 
             for (int i = 0; i < 3; i++){
@@ -64,24 +66,13 @@ public class RepeatedTaskTest {
             }
             return result;
         };
-        Future<String> fut = exec.submit(task);
-        String firstResult = "";
+    }
 
+    private String getRes(Future<String> fut){
         try {
-            firstResult = fut.get();
+            return fut.get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            return "thrown InterruptedException";
         }
-        fut = exec.submit(task);
-        String secondResult = "";
-
-        try {
-            secondResult = fut.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        assertNotEquals(secondResult, firstResult);
-
     }
 }

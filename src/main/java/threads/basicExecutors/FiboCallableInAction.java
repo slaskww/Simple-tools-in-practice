@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 /**
+ * (2)
  * runnable i Callable są różnymi wersjmi definiowania zadania do wykonania.
  * Zarówno Runnable jak i Callable określają w swych metodach kod, który ma zostać wykonany w wątku.
  * Callable zapewnia jednak, że zostanie zwrócony wynik działania kodu oraz daje możliwość zgłoszenia wyjątku kontrolowanego.
@@ -32,7 +33,7 @@ import java.util.concurrent.*;
  *      boolean isCancelled() - zwraca informację, czy zadanie zostało anulowane
  *      boolean isDone() - zwraca informację, czy zadanie zostało zakończone (przez zwykłe zakończenie lub anulowanie)
  *
- *      W zadaniu tworzymy Wykonawce, któremu dajemy cztery zadania implementujące Callable (FiboCallableInAction).
+ *      W zadaniu tworzymy Wykonawcę, któremu dajemy cztery zadania implementujące Callable (FiboCallableInAction).
  *      Zwracane obiekty Future umieszczamy na liście i w pętli co 30 ms. usypiamy wątek oraz iteracyjnie odpytujemy każdy z obiekt Future, czy zadanie zostalo wykonane.
  *      Jeśli zadanie zostało wykonane, usuwamy obiekt Future z listy.
  *      Petlę kończymy, jeśli wszystkie zadania zostaną wykonane, a tym samym na liście nie będzie już żadnych obiektów Future<T>
@@ -46,12 +47,27 @@ public class FiboCallableInAction {
         List<Future<Long>> futures = new ArrayList<>();
 
         for (int i : new int[]{16, 23, 32}) {
-            Future<Long> f = exec.submit(new FiboWithCallable(i));
+            Future<Long> f = exec.submit(new FiboWithCallable(i)); //submit przyjmuje zadanie do wykonania i zwraca obiekt wyniku typu Future<t> (Uwaga, metoda nie czeka ze zwróceniem obiektu Future na zakończenie zadania )
             futures.add(f);
         }
 
         while (futures.size() > 0) {
             Thread.sleep(30);
+
+      /*      for (int i = 0; i < futures.size(); i++) {
+                Future<Long> fut = futures.get(i);
+                if (fut.isDone()) {
+                    try {
+                        System.out.println("Rezultat: " + fut.get());
+                    } catch (InterruptedException | ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                    futures.remove(i);
+                    System.out.println("Pozostalo watkow: " + futures.size());
+                    break;
+                }
+                System.out.println("Pozostalo watkow: " + futures.size());
+            }*/
 
             for (Iterator<Future<Long>> fit = futures.iterator(); fit.hasNext(); ) {
                 Future<Long> fut = fit.next();
@@ -61,10 +77,12 @@ public class FiboCallableInAction {
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
+                    fit.remove();
                 }
-                fit.remove();
                 System.out.println("Pozostalo watkow: " + futures.size());
             }
+
         }
+        exec.shutdown();
     }
 }

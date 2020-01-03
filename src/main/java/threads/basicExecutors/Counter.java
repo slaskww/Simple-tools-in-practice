@@ -1,5 +1,9 @@
 package threads.basicExecutors;
 
+/**
+ * (2) Klasa zadania typu Runnable - ten typ zadania nie zwraca wyniku
+ */
+
 public class Counter implements Runnable {
 
 private final int NUMBER;

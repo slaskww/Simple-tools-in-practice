@@ -7,7 +7,7 @@ import java.util.Set;
 import static javax.swing.JOptionPane.showInputDialog;
 import static javax.swing.JOptionPane.showMessageDialog;
 
-/**
+/**(1)
  * Proces (program) wykonuje się w dwóch wątkach.
  * Głowny wątek wykonuje się po uruchomieniu metody main().
  * Równolegle wykonuje się wątek utworzony w metodzie main() i uruchomiony metodą start().
@@ -18,6 +18,8 @@ import static javax.swing.JOptionPane.showMessageDialog;
  * OBIEKT WĄTKU tworzymy wykorzystując klasę THREAD. Klasa ta pozwala na tworzenie nowych wątków i uruchamianie w nich kodu wykonujacego.
  * Obiekt klasy Thread przyjmuje w konstruktorze argument typu Runnable (np. nasz obiekt MyTimer), a wywołanie metody start() powoduje uruchomienie kodu
  * metody run() naszego Timera w nowo utworzonym wątku.
+ *
+ * W przykładzie wykorzystujemy statyczne metody showMessageDialog() i showInputDialog() wyświetlające komunikaty w postaci okienkowej.
  */
 
 public class CapitalsRunnableInAction {
@@ -29,7 +31,7 @@ public class CapitalsRunnableInAction {
 
         int count = 0;
 
-        Thread thread = new Thread(new MyTimer());
+        Thread thread = new Thread(new MyTimer()); //w nowym wątku uruchomiony zostanie zegar odmierzający czas
         thread.start();
 
 
@@ -50,6 +52,6 @@ public class CapitalsRunnableInAction {
                 answers.add(input);
             }
         }
-        thread.interrupt(); //wywołanie metody interrupt ustawia flagę przerwania, nie przerywa kodu wątku. O samo przerwanie trzeba zadbać w kodzie metody run()
+        thread.interrupt(); //wywołanie metody interrupt ustawia flagę przerwania w wątku z zegarem MyTimer lecz nie przerywa kodu wątku. O samo przerwanie trzeba zadbać w kodzie metody run()
     }
 }
