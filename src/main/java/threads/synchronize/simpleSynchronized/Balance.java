@@ -1,6 +1,7 @@
 package threads.synchronize.simpleSynchronized;
 
 /**
+ * (1)
  * Ryglowanie w ogólnym pojęciu polega na zapewnieniu wyłącznego dostępu do pól obiektu lub pól statycznych klasy, realizowanym przez synchronizowane metody get() i set()
  * Dodatkowo ryglowanie zabezpiecza fragmenty kodu przed równoczesnym wywołaniem z różnych wątków.
  * Kod który może być wykonywany w danej chwili tylko przez jeden wątek nazywamy sekcją krytyczną.

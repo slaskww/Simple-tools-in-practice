@@ -3,6 +3,10 @@ package threads.synchronize.simpleSynchronized;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
+/**
+ * Obiekt typu Callable 'opakowujemy' w obiekt typu FutureTask, by móc wykorzystać metode done(), która jest wywoływana automatycznie po zakończeniu wykonywania kodu wątku.
+ */
+
 public class BalanceFuture extends FutureTask<Integer> {
 
     private String name;
