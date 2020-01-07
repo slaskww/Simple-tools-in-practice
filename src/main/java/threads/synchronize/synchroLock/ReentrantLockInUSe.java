@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * (2.1)
  * Obiekty klasy ReentrantLock odpowiadają mechanizmowi synchronizacji za pomocą słowa synchronized.
  * W odróżnieniu do synchronizacji z synchronized obiekty ReentrantLock:
  *      -mogą być przekazywane przez referencję jako argumenty metod lub w konstruktorach
@@ -34,33 +35,34 @@ public class ReentrantLockInUSe {
         this.number = number;
     }
 
-    private void increase(String name) throws InterruptedException {
+    private void increase(String name) {
 
 
         lock.lock(); // zamykamy rygiel i dalej wykonujemy kod sekcji krytycznej
 
         try{
 
-            System.out.println("\tThread " + name + ": initial value = " + number);
-            number++;
+            System.out.println("\tAccess locked in Thread " + name + ": initial value = " + number);
             Thread.sleep(1000);
-            System.out.println("\tThread " + name + ": increased value = " + number);
+            number++;
+            System.out.println("\tThread " + name + ": increased value = " + number + " and then unlock access");
 
+        }catch(InterruptedException e){
+            e.printStackTrace();
         } finally {
             lock.unlock(); // otwieramy rygiel w bloku finally, by zapewnić zwolnienie blokady w każdych warunkach, również w przypadku wystąpienia wyjątku w sekcji krytycznej
         }
     }
 
-    private void decrease(String name) throws InterruptedException {
+    private void decrease(String name) {
 
 
         lock.lock(); // zamykamy rygiel i dalej wykonujemy kod sekcji krytycznej
 
         try{
-            System.out.println("Thread " + name + ": initial value = " + number);
+            System.out.println("Access locked in Thread " + name + ": initial value = " + number);
             number--;
-            //Thread.sleep(500);
-            System.out.println("Thread " + name + ": decreased value = " + number);
+            System.out.println("Thread " + name + ": decreased value = " + number + " and then unlock access");
 
         } finally {
             lock.unlock(); // otwieramy rygiel w bloku finally, by zapewnić zwolnienie blokady w każdych warunkach, również w przypadku wystąpienia wyjątku w sekcji krytycznej
@@ -72,22 +74,11 @@ public class ReentrantLockInUSe {
 
         ExecutorService exec = Executors.newCachedThreadPool();
 
-        for (int i = 0; i < tnumber; i++){
-            int n = i+1;
-            Runnable runnableInc = () -> {
-                try {
-                    increase(""+n);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            };
-            Runnable runnableDec = () -> {
-                try {
-                    decrease(""+n);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            };
+        for (int i = 0; i < tnumber; i+=2){
+            int n = i;
+            Runnable runnableInc = () -> increase(""+n);
+            Runnable runnableDec = () -> decrease(""+(n+1));
+
             exec.execute(runnableInc);
             exec.execute(runnableDec);
         }

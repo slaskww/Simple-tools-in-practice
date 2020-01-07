@@ -8,15 +8,16 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
+ * (2.3)
  * Klasa StampedLock odznacza się lepszą efektywnością niż ReadWriteLock.
- * Posiada metode tryOptimisticRead(), która nie działa blokująco na kod modyfikujący, a dodatkowo pozwala odczytać dane, gdy założona jest blokada writeLock.
+ * Posiada metodę tryOptimisticRead(), która nie działa blokująco na kod modyfikujący, a dodatkowo pozwala odczytać dane, gdy założona jest blokada writeLock.
  * W odróżnieniu do ReadWriteLock, StampedLock nie implementuje interfejsu Lock.
  * Nie powinniśmy używać tej klasy do wywołań rekurencyjnych.
  *
  * Metody tej klasy zwracają znacznik stamp będący wartością typu long.
  * Znacznik ten wykorzystujemy jako argument w metodzie otwierającej rygiel, unlockRead(stamp), unlockWrite(stamp).
  * Klasa posiada metody z przyrostkiem try.. (tryReadLock, tryWriteLock, tryConvertToWriteLock, tryOptimisticRead) zwracające stamp a ich wywołanie
- * nie zawsze będzie blokujące. Jeśli zwrócona wartość stamp = 0, oznacza to, że nie udało się wejść do sekcji krytycznej, bo inny wątek postawil tam rygiel.
+ * nie zawsze będzie blokujące. Jeśli zwrócona wartość stamp jest równa 0, oznacza to, że nie udało się wejść do sekcji krytycznej, bo inny wątek postawil tam rygiel.
  * Daje nam to pewne możliwości zareagowania na taki fakt.
  *
  * Metoda tryOptimisticRead() pozwala na postawienie rygla optymistycznego. Zakłada się tutaj, że modyfikacje danych i ich odczyt rzadko nakładają się na siebie.
@@ -41,59 +42,57 @@ public class StampedLockInUse {
 
     public void readValues(int tnumber){
 
-        long stamp = lock.tryOptimisticRead();  //czytamy dane bez blokowania, nawet gdy inny wątek ustawił już writeLock.
+        long stamp = lock.tryOptimisticRead();  //czytamy dane bez blokowania (nie stawiamy locka, więc nie musimy dbać o otwarcie w finally), nawet gdy inny wątek ustawił już writeLock.
                                                 //Optymistycznie bowiem zakładamy, że między odczytem a wykorzystaniem
-                                                //danych ich wartość nie uległa modyfikacji przez inny wątek
+                                                //danych ich wartość nie ulegnie modyfikacji przez inny wątek
         int f = first;
         int l = last;
 
         if (lock.validate(stamp)){              //sprawdzamy, czy wartość danych zostala niezmieniona
-
-           String seq = IntStream.rangeClosed(f, l)
-                   .mapToObj(i -> String.valueOf(i))
-                   .collect(Collectors.joining(", "));
-           System.out.println("Thread " + tnumber + ", OptimisticRead, sequence: " + seq);
-        } else {                                //jeśli inny wątek zmienił wartość danych, to czekamy na normalny dostęp by ponownie odczytać dane
+           processData(f, l, tnumber);
+        } else {                                //jeśli inny wątek zmienił wartość danych, to czekamy na normalny dostęp by ponownie odczytać dane. Wtedy jednak musimy zadbać o ponowne otwarcie locka
             stamp = lock.readLock();
             f = first;
             l = last;
-
             try{
-                String seq = IntStream.rangeClosed(f, l)
-                        .mapToObj(i -> String.valueOf(i))
-                        .collect(Collectors.joining(", "));
-                System.out.println("Thread " + tnumber + ", readLock, sequence: " + seq);
+               processData(f, l, tnumber);
             } finally {
                 lock.unlockRead(stamp);
             }
         }
     }
 
+    private void processData(int f, int l, int tnumber){
+        String seq = IntStream.rangeClosed(f, l)
+                .mapToObj(i -> String.valueOf(i))
+                .collect(Collectors.joining(", "));
+        System.out.println("Thread " + tnumber + ", readLock, sequence: " + seq);
+    }
+
     public void setValues(int x, int y, int tnumber){
 
-        long stamp = lock.readLock(); //dostajemy znacznik, po ew. oczekiwaniu na otwarcie rygla przez inny wątek
+        long stamp = lock.readLock(); //zakladamy locka, dostajemy znacznik, po ew. oczekiwaniu na otwarcie rygla przez inny wątek
         try{
-            while(first < x && last < y){
-
+            if(first < x && last < y){ //jeśi nowe wartości są wyższe niż pierwotne, dokonujemy aktualizacji wartości
                 long smpConv = lock.tryConvertToWriteLock(stamp); //chcemy zmodyfikować wartości, więc uzyskujemy lock do zapisu, robimy to przez konwertowanie readLocka
 
                 if (smpConv != 0){ //jeśli konwersja sie udała, wykonujemy blok
                     first = x;
                     last = y;
                     stamp = smpConv;
-                    System.out.println("Thread " + tnumber + ", ConvertToWriteLock, values set.");
-                    break;
-                } else{            //konwersja z readLock do writeLock się nie udała, zwalniamy readLock i czekamy na dostęp w trybie pisania
-                    lock.unlockRead(stamp);
-                    stamp = lock.writeLock();
+                    System.out.println("Thread " + tnumber + ", ConvertToWriteLock, values set. New values: " + first + ", " + last);
+                } else{            //konwersja z readLock do writeLock się nie udała...
+                    lock.unlockRead(stamp); //zwalniamy readLock ...
+                    stamp = lock.writeLock(); //i czekamy na dostęp w trybie pisania
                     first = x;
                     last = y;
-                    System.out.println("Thread " + tnumber + ", writeLock, values set.");
-                    break;
+                    System.out.println("Thread " + tnumber + ", writeLock, values set. New values: " + first + ", " + last);
                 }
             }
-
-        } finally {
+            Thread.sleep(500);
+        } catch(InterruptedException e){
+            e.printStackTrace();
+        }finally {
             lock.unlock(stamp); //metoda unlock pozwala otworzyć writeLock i readLock
         }
     }
