@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
 /**
+ * (3.3)
  * Semafor jest synchronizatorem, który zapewnia ograniczenie dostępu wątków do zasobu.
  * Obiekt semafora prowadzi licznik pozwoleń dostępu do zasobu.
  * Gdy jakiś wątek chce otrzmać dostęp do zasobu, wywołuje na rzecz semafora metodę aquire().
@@ -39,7 +40,7 @@ public class SemaphoreInUse {
     public void enter(String car){
 
         try {
-            semaphore.acquire();
+            semaphore.acquire(); //Gdy wątek chce otrzymać dostęp do zasobu, wywołuje na rzecz semafora metodę aquire(). Jeśli brak jest pozwoleń, kod w takim wątku jest blokowany na metodzie aquire()
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -48,20 +49,20 @@ public class SemaphoreInUse {
     }
 
     public void leave(String car){
-        semaphore.release();
+        semaphore.release(); // po zakończeniu przetwarzania kodu wywołujemy na rzecz semafora metodę release(). Powoduje to zwiekszenie liczby pozwoleń o 1
         removeCar(car);
         System.out.println(car + " left the carpark.");
     }
 
-    public synchronized List<String> getCars(){
+    public synchronized List<String> getCars(){ //metoda musi być synchronizowana, gdyż lista jest kolekcją niesynchronizowaną
         return carpark;
     }
 
-    private synchronized void addCar(String car){
+    private synchronized void addCar(String car){ //metoda musi być synchronizowana, gdyż lista jest kolekcją niesynchronizowaną
         carpark.add(car);
     }
 
-    private synchronized void removeCar(String car){
+    private synchronized void removeCar(String car){ //metoda musi być synchronizowana, gdyż lista jest kolekcją niesynchronizowaną
         carpark.remove(car);
     }
 
@@ -76,8 +77,7 @@ public class SemaphoreInUse {
 
         try { Thread.sleep(200); } catch (InterruptedException e) { e.printStackTrace(); }
 
-
-            for (String c : carpark.getCars().subList(0,2)){ //dwa pierwsze pojazdy opuszczaja parking
+        for (String c : carpark.getCars().subList(0,2)){ //dwa pierwsze pojazdy opuszczaja parking
            exec.execute(() -> carpark.leave(c));
         }
 

@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * (3.2)
  * CyclicBarrier czyli bariera działa podobnie jak zasuwa z tą różnicą, że wszystkie działające wątki
  * wykorzystujące barierę wykonują operacje do momentu aż dobiegną do bariery, czyli do miejsca w którym wątek wywołuje metodę await().
  * W tym miejscu wątek czeka, aż każdy z pozostałych wątków dobiegnie do bariery.
@@ -31,7 +32,7 @@ public class CyclicBarrierInUse {
     public static void main(String[] args) {
 
         String[] words = "Here is an example of using a barrier".split("\\s");
-        List<List<String>> wordsCharsList = new ArrayList<>(); //lista list liter
+        List<List<String>> wordsCharsList = new ArrayList<>(); //lista list liter będących stringami
 
         Runnable barrierAction = () ->{ //akcja wykonywaniu po zwolnieniu bariery
             wordsCharsList.forEach(sublist -> System.out.print(String.join("", sublist) + " "));
@@ -59,7 +60,7 @@ public class CyclicBarrierInUse {
                 Collections.reverse(word);
                 Thread.sleep(100);
                 System.out.println("Thread processing " + sWord + ": is waiting again");
-                cb.await();
+                cb.await(); //W tym miejscu wątek czeka, aż każdy z pozostałych wątków dobiegnie do bariery
             } catch (InterruptedException | BrokenBarrierException e) {
                 e.printStackTrace();
             }
