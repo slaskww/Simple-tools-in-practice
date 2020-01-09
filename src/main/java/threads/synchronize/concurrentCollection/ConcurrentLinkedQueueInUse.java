@@ -7,18 +7,23 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
 /**
+ * (6.1)
  * Dużym wsparciem w programowaniu współbieżnym są konkurencyjne kolekcje z biblioteki java.util.concurrent
  * należą do nich:
  *      kolejki:
- *          -ConcurrentLinkedQueue
- *          -ConcurrentLinkedDeque
-*       mapy:
+ *          -ConcurrentLinkedQueue - zapewniają wielowątkowo bezpieczne operacje wstawiania i pobierania
+ *          -ConcurrentLinkedDeque - zapewniają wielowątkowo bezpieczne operacje wstawiania i pobierania
+ *          -ArrayBlockingQueue, LinkedBlockingQueue, SynchronousQueue - blokujące kolejki, operacje odczytu
+ *              są blokowane gdy kolejka jest pusta, operacje odczytu blokowane gdy  kolejka jest pełna
+ *      mapy:
  *          -ConcurrentHashMap
- *          -ConcurrentSkipListMap
-*       zbiory:
- *          -ConcurrentSkipListSet
+ *          -ConcurrentSkipListMap - dodatkowo zapewnia uprządkowanie kluczy
+ *      zbiory:
+ *          -ConcurrentSkipListSet - zbiór uporządkowany
  *  Kolekcje te zapewniają bezpieczne wątkowo operacje wstawiani i pobierania i modyfikacji.
  *  Kolekcji należy używać w sytuacji, gdy wiele wątków współdzieli jakąś kolekcję.
+ *
+ *  W naszym przykładzie zaimplementujemy konkurencyjną kolejkę która reprezentuje parking do ktorego dodajemy lub usuwamy pojazd.
  *
  */
 public class ConcurrentLinkedQueueInUse {
@@ -39,13 +44,16 @@ public class ConcurrentLinkedQueueInUse {
             e.printStackTrace();
         }
         carpark.add(car);
-        System.out.println("Car " + car + " entered the carpark");
+        System.out.println("\to=o> " + car + " entered the carpark");
     }
 
-    public void leave(String car){
-        semaphore.release();
-        System.out.println("Car " + car + " left the carpark");
 
+    public void leave(){
+       String car =  carpark.poll();
+       if (car != null){
+           System.out.println("<o=o " + car + " left the carpark");
+           semaphore.release();
+       }
     }
 
     public ConcurrentLinkedQueue<String> getCars(){
@@ -55,24 +63,13 @@ public class ConcurrentLinkedQueueInUse {
     public static void main(String[] args) {
 
         ConcurrentLinkedQueueInUse carpark = new ConcurrentLinkedQueueInUse(4);
-
         ExecutorService exec = Executors.newCachedThreadPool();
 
         for (String c : Arrays.asList("Toyota", "BMW", "Lexus", "VW Golf", "Mercedes", "Fiat", "Nissan")){
             exec.submit(() -> carpark.enter(c));
         }
-
         try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
-
-        for (int i = 1; i <= 4; i++){
-            String car = carpark.getCars().poll(); //usuwamy samochód z kolejki, metoda zwrca usunięty pojazd
-
-            if (car != null){
-                exec.submit(() -> carpark.leave(car));
-                try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
-
-            }
-        }
+        for (int i = 1; i <= 4; i++) carpark.leave();
         exec.shutdown();
     }
 }

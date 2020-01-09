@@ -1,9 +1,11 @@
 package threads.synchronize.volatileWord;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * (4)
  * Specyfikator volatile daje gwarancję, że zmiany na zmiennej dokonane w jednym wątku, będą widoczne dla innych wątków.
  * Bez użycia tego specyfikatora nie mamy gwarancji, że wątek wykonujący się później zobaczy aktualną wartość zmiennej zmienionej we wcześniejszym wątku.
  * Wiąże się to z mechanizmem optymalizacji wątków, który kopiuje zmienne do lokalnej pamieci wątków i wartość ta nie zawsze będzie aktualna.
@@ -23,7 +25,7 @@ public class Counter {
         this.number = number;
     }
 
-      public void increment(String thread){ //synchronizujemy metodę inkrementującą. Inkrementacja nie jest operacją atomową
+      public synchronized void increment(String thread){ //jeśli nie uczynimy metody wynchronizowaną, to otrzymamy zaburzone wyniki. Stanie się tak, dlatego, że inkrementacja nie jest operacją atomową
         number++;
         System.out.println(thread + " incremented the value.");
     }
@@ -35,15 +37,22 @@ public class Counter {
     public static void main(String[] args) {
         Counter counter = new Counter(0);
         int tnumber = 1000;
-
+        CountDownLatch latch = new CountDownLatch(tnumber); //skorzystaliśmy przy okazji z zasuwy, dzięki ktorej wyświetlenie końcowego komunikatu w wątku głownym
+                                                            //wykona się po zakończeniu działań wątków podrzędnych.
         ExecutorService exec = Executors.newCachedThreadPool();
 
         for (int i = 0; i < tnumber; i++){
             int temp = i + 1;
-            exec.submit(() -> counter.increment("Thread"+ temp));
+            exec.submit(() -> {counter.increment("Thread"+ temp);
+            latch.countDown();
+            });
         }
 
-        try { Thread.sleep(100); } catch (InterruptedException e) { e.printStackTrace(); }
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         System.out.println("Number after incrementation: " + counter.get());
         exec.shutdown();
     }
