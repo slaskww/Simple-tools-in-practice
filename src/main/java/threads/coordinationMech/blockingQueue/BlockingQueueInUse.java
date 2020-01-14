@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
 
 /**
+ * (2)
  * Biblioteka java.util.concurrent zawiera zestaw przydatnych i łatwiejszych w użyciu środków do koordynacji wątków.
  * Są nimi kolejki blokujące:
  *  -ArrayBlockingQueue
@@ -26,26 +27,26 @@ public class BlockingQueueInUse {
 
     Runnable journalist = () -> {
         String[] questions = {"Are you famous?", "Have you got any dreams?", "Do you want me to finish the interview?", ""};
-        for(String q : questions){
+        for(String question : questions){
 
             try {
-               String a = answ.take();
+               String a = answ.take(); //jeśli kolejka jest pusta, to wątek jest blokowany w oczekiwaniu na to, aż inny wątek doda element do kolejki
                 System.out.println("Journalist read the answer: " + a);
                 Thread.sleep(1000);
-                quest.put(q);
+                quest.put(question);
             } catch (InterruptedException e) {
                 return;
             }
         }
     };
 
-    Runnable star = () -> {
-        String q = "empty";
+    Runnable celebrity = () -> {
+        String q = " ";
         while(!q.equals("")){
             try {
-                q = quest.take();
+                q = quest.take(); //jeśli kolejka jest pusta, to wątek jest blokowany w oczekiwaniu na to, aż inny wątek doda element do kolejki
                 Thread.sleep(1000);
-                if (!q.equals("")) System.out.println("Star read the question: " + q);
+                if (!q.equals("")) System.out.println("Celebrity read the question: " + q);
                 answ.put("Yes, duh!");
             } catch (InterruptedException e) {
                 return;
@@ -57,7 +58,7 @@ public class BlockingQueueInUse {
         BlockingQueueInUse coord = new BlockingQueueInUse();
         ExecutorService exec = Executors.newCachedThreadPool();
         exec.execute(coord.journalist);
-        exec.execute(coord.star);
+        exec.execute(coord.celebrity);
         exec.shutdown();
     }
 }

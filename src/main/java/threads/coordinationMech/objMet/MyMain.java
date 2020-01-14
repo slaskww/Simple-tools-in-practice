@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * (1)
  * Ryglowanie (dokonywane przy użyciu słowa synchronized lub obiektów typu Lock) zapobiega niechcianym interakcjom między wątkami.
  * By wątki mogły współdziałać, potrzebujemy dodatkowo mechanizmu ich koordynacji.
  * Może nam bowiem zależeć, by wątki zachowywały pewną kolejność działań w ramach wzajemnej interakcji.

@@ -18,7 +18,7 @@ public class MrWriter implements Runnable {
      for (int i = 0; i < txts.size(); i++){
          try {
 
-             synchronized (coord){
+             synchronized (coord){ //synchronizujemy obiekt Coordination, by móc skoordynować wydruki MrWritera i MrReadera
                  coord.write(txts.get(i));
                  if (txts.get(i) != null) System.out.println("MrWriter sent the message.");
                  Thread.sleep(1000);

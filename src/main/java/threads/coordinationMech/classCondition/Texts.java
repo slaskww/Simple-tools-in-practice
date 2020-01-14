@@ -5,6 +5,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * (3)
  * Alternatywą dla mechnanizmu wait-notify jest mechanizm przy użyciu metod klasy Condition z biblioteki java.util.concurrent.
  * Obiekty warunków (Condition) pobieramy z obiektu Lock. Tak więc tworzone warunki zawsze osadzone są w kontekście jakiejś blokady.
  * Obiekty warunków posiadają dwie kluczowe metody:
