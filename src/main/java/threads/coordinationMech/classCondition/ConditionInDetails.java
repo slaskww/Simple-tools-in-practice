@@ -17,13 +17,12 @@ public class ConditionInDetails {
 
 
     public void set(String text){
-        try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
         lock.lock();
         System.out.println("\tZalozono lock na met set()");
         try{
             if (txt != null){
                 while(newTxt) {
-                    System.out.println("\twątek writera czeka w set()");
+                    System.out.println("\twątek writera czeka w set(), zwalnia blokadę innemu wątkowi");
                     condWrite.await();
                 }
             }
@@ -42,13 +41,12 @@ public class ConditionInDetails {
     }
 
     public String get(){
-        try { Thread.sleep(3000); } catch (InterruptedException e) { e.printStackTrace(); }
         lock.lock();
         System.out.println("Zalozono lock na met get()");
 
         try{
             while(!newTxt) {
-                System.out.println("wątek readera czeka w get()");
+                System.out.println("wątek readera czeka w get(), zwalnia blokadę dla innego wątku");
                 condRead.await();
             }
             System.out.println("wątek readera przed odczytaniem tekstu w get()");

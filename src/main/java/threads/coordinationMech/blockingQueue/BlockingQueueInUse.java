@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * (2)
@@ -11,6 +12,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  * Są nimi kolejki blokujące:
  *  -ArrayBlockingQueue
  *  -LinkedBlockingQueue
+ *  -LinkedBlockingDeque  - kolejka z dwoma końcami (Double-ended queue)
  *
  * Obie klasy implementują interfejs BlockingQueue kolejki typu fifo.
  * Dwie metody istotne z punktu widzenia koordynacji działania wątków to:
@@ -22,8 +24,8 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class BlockingQueueInUse {
 
-    private LinkedBlockingDeque<String> quest = new LinkedBlockingDeque<>();
-    private LinkedBlockingDeque<String> answ = new LinkedBlockingDeque<>(Arrays.asList("Thank you for having me."));
+    private LinkedBlockingQueue<String> quest = new LinkedBlockingQueue<>();
+    private LinkedBlockingQueue<String> answ = new LinkedBlockingQueue<>(Arrays.asList("Thank you for having me."));
 
     Runnable journalist = () -> {
         String[] questions = {"Are you famous?", "Have you got any dreams?", "Do you want me to finish the interview?", ""};

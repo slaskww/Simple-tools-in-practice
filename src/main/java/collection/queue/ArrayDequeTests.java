@@ -13,7 +13,7 @@ public class ArrayDequeTests {
     public void shouldAddElemAtTheBeginningOfTheQueue(){
 
         /**
-         * ArrayDeque jest kolekcją podwójną, co oznacza, że operacje dodawania, pobierania i usuwania elementów sa możliwe z obu jej końców
+         * ArrayDeque (Double-ended queue) jest kolekcją podwójną, co oznacza, że operacje dodawania, pobierania i usuwania elementów sa możliwe z obu jej końców
          */
 
         ArrayDeque<String> deque = new ArrayDeque<>();
@@ -30,7 +30,7 @@ public class ArrayDequeTests {
     public void shouldAddElemAtTheEndOfTheQueue(){
 
         /**
-         * ArrayDeque jest kolekcją podwójną, co oznacza, że operacje dodawania, pobierania i usuwania elementów sa możliwe z obu jej końców
+         * ArrayDeque (Double-ended queue) jest kolekcją podwójną, co oznacza, że operacje dodawania, pobierania i usuwania elementów sa możliwe z obu jej końców
          */
 
         ArrayDeque<String> deque = new ArrayDeque<>();
