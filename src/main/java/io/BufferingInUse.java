@@ -9,7 +9,7 @@ import java.io.*;
  * Ma to duży sens przy odczycie danych z dużych plików tekstowych.
  * BufferedReader, BufferedWriter to klasy przetwarzające, więc nie możemy podać w ich konstruktorach fizycznego źródła danych w sposób
  * bezpośredni. Tę umiejętność posiadają jedynie strumieniowe klasy przedmiotowe (m.in FileReader, FileWriter) i to właśnie obiekty tych klasy
- * opakowujemy obiektami BufferedReader, BufferedWriter. Przy okazji korzystamy z metody newLine() zdefiniowanej w BufferedWriter
+ * 'opakowujemy' obiektami BufferedReader, BufferedWriter. Przy okazji korzystamy z metody newLine() zdefiniowanej w BufferedWriter
  * pozwalającej na dodanie separatora wierszy niezależnie od platformy systemowej i readLine() umożliwiającą czytanie pliku tekstowego wiersz po wierszu.
  * W programie korzystamy z klasy LineNumberReader, która dziedziczy klase BufferedReader, dzięki której możemy uzyskać informację o numerze bieżącego wiersza
  * (metoda getLineNumber()).
@@ -29,7 +29,7 @@ public class BufferingInUse {
           while ((line = br.readLine()) != null ){
 
               bw.write(br.getLineNumber() + " " + line);
-              bw.newLine(); //dodanei separatora wiersza
+              bw.newLine(); //dodanie separatora wiersza
           }
 
       }  catch (IOException e) {

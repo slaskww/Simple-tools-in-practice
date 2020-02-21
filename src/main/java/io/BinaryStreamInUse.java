@@ -5,7 +5,7 @@ import java.io.*;
 public class BinaryStreamInUse {
 
     /**
-     *  Klasy DataInputStream i DataOutputStream służą do zapisu i odczytu danych typów prostych i Stringów w postaci binarnej (zero-jedynkowej)
+     *  Klasy DataInputStream i DataOutputStream służą do zapisu i odczytu danych typów prostych i łańcuchów znaków w postaci binarnej (zero-jedynkowej)
      *  Dla każdego typu prostego mamy osobną metodę do zapisu i odczytu (np dla integera mamy readInt() i writeInt() a dla
      *  Stringów mamy readUTF() i writeUTF().
      *
