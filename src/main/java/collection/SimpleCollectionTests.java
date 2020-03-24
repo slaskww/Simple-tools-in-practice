@@ -5,8 +5,7 @@ import org.junit.Test;
 import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class SimpleCollectionTests {
 
@@ -23,8 +22,10 @@ public class SimpleCollectionTests {
          */
 
         List<Integer> list = Arrays.asList(1, 3, 3, 3, 5);
+
         Set<Integer> set = new HashSet<>(list);
         assertThat(set.size(), is(3));
+        assertTrue(set.containsAll(list));
     }
 
     @Test
